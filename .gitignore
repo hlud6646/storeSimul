@@ -1,0 +1,6 @@
+customers/customers/__pycache__
+customers/logs
+customers/poetry.lock
+database/.idea
+products/logs
+suppliers/dist-newstyle
