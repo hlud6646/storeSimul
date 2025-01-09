@@ -6,6 +6,7 @@ defmodule Orders.Order do
   schema "order" do
     field(:customer, :integer)
     field(:created, :utc_datetime)
+    field(:address, :string)
     field(:packed, :utc_datetime)
     field(:dispatched, :utc_datetime)
   end
@@ -40,5 +41,6 @@ defmodule Orders.Product do
     field(:material, :string)
     field(:color, :string)
     field(:department, :string)
+    field(:inventory, :integer)
   end
 end

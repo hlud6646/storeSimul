@@ -1,6 +1,7 @@
 defmodule Orders.NewOrder do
   use GenServer
   import Ecto.Query
+  import Faker.Address.En
 
   def start_link(_) do
     GenServer.start_link(__MODULE__, [], [])
@@ -11,23 +12,24 @@ defmodule Orders.NewOrder do
     IO.puts("Creating a new order...")
 
     customer_id = get_random_customer_id()
+    address = "#{street_address()}, #{city()}, #{zip_code()}, #{state()}"
+    {:ok, order} = Orders.Repo.insert(%Orders.Order{customer: customer_id, address: address})
+    products = get_random_products(1 + :rand.uniform(10))
 
-    order = %Orders.Order{customer: customer_id}
-    Orders.Repo.insert(order)
+    order_products = make_order_products(products, order)
 
-    products = get_random_products(1 + :rand.uniform(30))
-    IO.inspect(products)
+    order_products
+    |> Enum.each(&Orders.Repo.insert/1)
 
-    # Pick a random n in 1..30,
-    # pick n random products, allocate each a random quantity,
-    # and add to the order.
+    IO.inspect(order_products)
+
     {:ok, nil}
   end
 
   def get_random_customer_id do
     Orders.Customer
-    |> Ecto.Query.order_by(fragment("RANDOM()"))
-    |> Ecto.Query.limit(1)
+    |> order_by(fragment("RANDOM()"))
+    |> limit(1)
     |> Orders.Repo.one()
     |> Map.get(:id)
   end
@@ -37,5 +39,16 @@ defmodule Orders.NewOrder do
     |> Ecto.Query.order_by(fragment("RANDOM()"))
     |> Ecto.Query.limit(^n)
     |> Orders.Repo.all()
+  end
+
+  def make_order_products(products, order) do
+    products
+    |> Enum.map(fn product ->
+      %Orders.OrderProduct{
+        order: Map.fetch!(order, :id),
+        product: Map.get(product, :id),
+        quantity: min(:rand.uniform(30), Map.get(product, :inventory))
+      }
+    end)
   end
 end
