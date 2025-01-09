@@ -14,14 +14,14 @@ import Database.PostgreSQL.Simple.FromRow (field, fromRow)
 import Database.PostgreSQL.Simple.ToField (toField)
 import Database.PostgreSQL.Simple.ToRow (toRow)
 import Faker
-import qualified Faker.Address as FAddress
-import qualified Faker.Company as FCompany
-import qualified Faker.Name as FName
-import qualified Faker.PhoneNumber as FPhone
+import Faker.Address qualified as FAddress
+import Faker.Company qualified as FCompany
+import Faker.Name qualified as FName
+import Faker.PhoneNumber qualified as FPhone
 import Statistics.Distribution (ContGen (genContVar))
 import Statistics.Distribution.Exponential (exponential)
 import System.Log.FastLogger
-import System.Random (StdGen, newStdGen, randomRs, randomRIO)
+import System.Random (StdGen, newStdGen, randomRIO, randomRs)
 import System.Random.MWC (GenIO, createSystemRandom)
 
 -- Data types.
@@ -96,14 +96,14 @@ generateRandomPrice = randomRIO (100, 1000000) -- Adjust the range as needed.
 
 writeSupplierProducts :: Connection -> Int -> [Int] -> IO ()
 writeSupplierProducts conn supplierID productIds = do
-    supplierProducts <- mapM (\productId -> do
-                                price <- generateRandomPrice
-                                return $ SupplierProduct (fromIntegral supplierID) productId price) productIds
-    void $
-        executeMany
-        conn
-        "INSERT INTO supplier_products (supplier_id, product_id, price) VALUES (?, ?, ?)"
-        supplierProducts
+  supplierProducts <- MapM 
+    (\productId -> SupplierProduct (fromIntegral supplierID) productId <$> generateRandomPrice) 
+    productIds
+  void $
+    executeMany
+      conn
+      "INSERT INTO supplier_products (supplier_id, product_id, price) VALUES (?, ?, ?)"
+      supplierProducts
 
 -- Sleep for a random amount of time.
 sleep :: IO ()
@@ -119,7 +119,7 @@ logSupplier :: Int -> IO ()
 logSupplier supplier = do
   timeCache <- newTimeCache simpleTimeFormat'
   (logger, cleanup) <- newTimedFastLogger timeCache (LogFileNoRotate "suppliers.log" defaultBufSize)
-  let msg = "New supplier with ID " <> (show supplier) <> "\n" :: String
+  let msg = "New supplier with ID " <> show supplier <> "\n" :: String
   putStr msg
   logger $ \time -> toLogStr time <> " - " <> toLogStr msg
   cleanup
