@@ -4,3 +4,5 @@ customers/poetry.lock
 database/.idea
 products/logs
 suppliers/dist-newstyle
+suppliers/suppliers.log
+orders/mix.lock

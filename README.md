@@ -18,3 +18,14 @@ will randomly create orders.
 A simple dashboard should show any DB interactions as they occur, a list of unshipped 
 orders etc. This could be a Hono app.
 
+
+### Done
+- Customers (Python)
+- Products (Scala)
+- Suppliers (Haskell)
+
+
+### To Do 
+- Orders
+
+
