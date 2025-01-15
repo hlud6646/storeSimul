@@ -4,12 +4,16 @@ from pathlib import Path
 from loguru import logger
 from faker import Faker
 from faker.providers import internet
-from numpy.random import exponential
 from time import sleep
+from math import log
+from random import random
 
 from models import Customer
 
 SECONDS_PER_MINUTE = 60
+
+def exponential(rate): 
+    return -(1 / rate) * log(1 - random())
 
 # Configure logging.
 log_dir = Path(__file__).parent.parent / 'logs'
