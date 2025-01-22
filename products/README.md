@@ -21,8 +21,9 @@ docker run --name store-products \
   -e DB_NAME=storesimul \
   -e DB_USER=storesimul \
   -e DB_PASSWORD=secret \
+  -tid \
   store/products:latest
-  ```
+```
 
 ## Questions
 - Is there any way to get compile time info about your database access?

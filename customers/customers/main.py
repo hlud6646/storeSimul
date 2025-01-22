@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from pathlib import Path
 from loguru import logger
 from faker import Faker
-from faker.providers import internet
+from faker.providers import internet, address
 from time import sleep
 from math import log
 from random import random
@@ -25,10 +25,10 @@ if not log_path.exists():
 logger.add(log_path, level="DEBUG")
 
 # Configure database connection.
-pg_database = os.environ.get("POSTGRES_DB")
-pg_user = os.environ.get("POSTGRES_USER")
-pg_password = os.environ.get("POSTGRES_PASSWORD")
-pg_port = os.environ.get("POSTGRES_PORT")
+pg_database = os.environ.get("POSTGRES_DB") or "storesimul"
+pg_user = os.environ.get("POSTGRES_USER") or "storesimul"
+pg_password = os.environ.get("POSTGRES_PASSWORD") or "secret"
+pg_port = os.environ.get("POSTGRES_PORT") or "5432"
 engine = create_engine(f'postgresql://{pg_user}:{pg_password}@localhost:{pg_port}/{pg_database}')
 
 # Configure data faker.
@@ -42,11 +42,10 @@ try:
         with Session(engine) as session:
             customer = Customer(name=faker.name(),
                                 email=faker.ascii_email(),
-                                # TODO: implement.
-                                primary_address=...fakeaddresss...)
+                                primary_address=faker.address())
             session.add(customer)
             session.commit()
             logger.info(f'New customer: {customer} written to database.')
-        sleep(exponential(5 * SECONDS_PER_MINUTE))
+        sleep(exponential(1 * SECONDS_PER_MINUTE) * 1000)
 except Exception as e:
     print(e)

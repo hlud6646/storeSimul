@@ -7,7 +7,7 @@ object Main extends App {
   val SECONDS_PER_MINUTE = 60
   var waitTime: Int = 0
 
-  val host = sys.env.getOrElse("DB_HOST", "localhost")
+  val host = sys.env.getOrElse("DB_HOST", "store-db")
   val port = sys.env.getOrElse("DB_PORT", "5432")
   val dbName = sys.env.getOrElse("DB_NAME", "storesimul")
   val username = sys.env.getOrElse("DB_USER", "storesimul")

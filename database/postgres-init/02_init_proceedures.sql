@@ -41,8 +41,6 @@ end;
 $welcome_product$ language plpgsql;
 
 
-
-
 create or replace trigger welcome_product
     after insert
     on customer
@@ -73,6 +71,3 @@ create or replace trigger inventory_audit
     on product
     for each row
 execute function record_inventory_modification();
-
-
- 

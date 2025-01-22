@@ -12,12 +12,14 @@ import Data.Text (Text)
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.FromRow (field, fromRow)
 import Database.PostgreSQL.Simple.ToField (toField)
+import Data.Maybe (fromMaybe)
+import System.Environment (getEnv, lookupEnv)
 import Database.PostgreSQL.Simple.ToRow (toRow)
 import Faker
-import Faker.Address qualified as FAddress
-import Faker.Company qualified as FCompany
-import Faker.Name qualified as FName
-import Faker.PhoneNumber qualified as FPhone
+import qualified Faker.Address as FAddress
+import qualified Faker.Company as FCompany
+import qualified Faker.Name as FName
+import qualified Faker.PhoneNumber as FPhone
 import Statistics.Distribution (ContGen (genContVar))
 import Statistics.Distribution.Exponential (exponential)
 import System.Log.FastLogger
@@ -66,10 +68,27 @@ instance ToRow SupplierProduct where
   toRow SupplierProduct {..} = [toField supplier_id, toField product_id, toField price]
 
 -- postgresql://[user[:password]@][host][:port][/dbname][?param1=value1&...]
-connectionUrl :: ByteString
-connectionUrl = pack "postgresql://storesimuladmin@localhost:5432/storesimul"
+getConnectionString :: IO ByteString
+getConnectionString = do
+    pgUser <- lookupEnv "POSTGRES_USER"
+    pgPassword <- lookupEnv "POSTGRES_PASSWORD"
+    pgHost <- lookupEnv "POSTGRES_HOST"
+    pgPort <- lookupEnv "POSTGRES_PORT"
+    pgDatabase <- lookupEnv "POSTGRES_DB"
 
--- Database IO.
+    let user = fromMaybe "storesimul" pgUser
+        password = fromMaybe "secret" pgPassword
+        host = fromMaybe "localhost" pgHost
+        port = fromMaybe "5432" pgPort
+        database = fromMaybe "storesimul" pgDatabase
+
+    return $ pack $ "postgresql://" ++
+                    user ++ ":" ++
+                    password ++ "@" ++
+                    host ++ ":" ++
+                    port ++ "/" ++
+                    database
+
 
 -- Insert a random supplier and return the new id.
 writeNewSupplier :: Connection -> IO Int
@@ -96,8 +115,8 @@ generateRandomPrice = randomRIO (100, 1000000) -- Adjust the range as needed.
 
 writeSupplierProducts :: Connection -> Int -> [Int] -> IO ()
 writeSupplierProducts conn supplierID productIds = do
-  supplierProducts <- MapM 
-    (\productId -> SupplierProduct (fromIntegral supplierID) productId <$> generateRandomPrice) 
+  supplierProducts <- mapM
+    (\productId -> SupplierProduct (fromIntegral supplierID) productId <$> generateRandomPrice)
     productIds
   void $
     executeMany
@@ -135,4 +154,8 @@ loop conn =
     loop conn
 
 main :: IO ()
-main = connectPostgreSQL connectionUrl >>= loop
+main = do
+    connectionUrl <- getConnectionString
+    conn <- connectPostgreSQL connectionUrl
+    loop conn
+    -- TODO: Does this close the connection properly?
