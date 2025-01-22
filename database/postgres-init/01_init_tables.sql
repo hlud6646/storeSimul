@@ -31,10 +31,11 @@ CREATE TABLE supplier_products
 (
     supplier_id integer NOT NULL references supplier (id),
     product_id  integer NOT NULL references product (id),
-    price       bigint  NOT NULL,
+    price       bigint  NOT NULL comment 'Price is in cents.',
     CONSTRAINT check_price CHECK ((price > 0)),
     primary key (supplier_id, product_id)
 );
+
 
 CREATE TABLE customer
 (
@@ -56,11 +57,11 @@ CREATE TABLE purchase_order
     address    text                      NOT NULL
 );
 
-CREATE TABLE public.purchase_order_products
+CREATE TABLE purchase_order_products
 (
     purchase_order integer NOT NULL references purchase_order (id),
     product        integer NOT NULL references product (id),
     quantity       integer NOT NULL,
-    CONSTRAINT quantity_positive CHECK ((quantity > 0))
+    CONSTRAINT quantity_positive CHECK ((quantity > 0)),
+    primary key(purchase_order, product)
 );
-

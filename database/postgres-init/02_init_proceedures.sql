@@ -4,11 +4,6 @@
 --
 -- This is just a 'Look Mum: No Hands!' example to show how to use triggers.
 
-create or replace trigger welcome_product
-    after insert
-    on customer
-    for each row
-execute function send_welcome_product();
 
 
 create or replace function send_welcome_product() returns trigger as
@@ -45,6 +40,14 @@ end;
 
 $welcome_product$ language plpgsql;
 
+
+
+
+create or replace trigger welcome_product
+    after insert
+    on customer
+    for each row
+execute function send_welcome_product();
 
 --
 -- Employee Audit
