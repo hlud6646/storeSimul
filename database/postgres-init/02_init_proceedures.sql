@@ -4,10 +4,11 @@
 --
 -- This is just a 'Look Mum: No Hands!' example to show how to use triggers.
 
-create or replace trigger welcome_product after insert
+create or replace trigger welcome_product
+    after insert
     on customer
     for each row
-    execute function send_welcome_product();
+execute function send_welcome_product();
 
 
 create or replace function send_welcome_product() returns trigger as
@@ -16,7 +17,6 @@ declare
     product_id        integer;
     purchase_order_id integer;
 begin
-
     -- Create a new order for this customer, keeping the order_id.
     insert into purchase_order(customer, address)
     values (NEW.id, NEW.primary_address)
@@ -44,3 +44,29 @@ begin
 end;
 
 $welcome_product$ language plpgsql;
+
+
+--
+-- Employee Audit
+--
+-- To try and identify inventory inconsistencies, we now record any modifications.
+
+create or replace trigger inventory_audit
+    after update
+    on product
+    for each row
+execute function record_inventory_modification();
+
+
+create or replace function record_inventory_modification() returns trigger as
+$record_inventory_modification$
+begin
+    insert into inventory_modification
+    values (now(),
+            OLD.inventory,
+            NEW.inventory,
+            current_user,
+            NEW.id);
+    return null;
+end;
+$record_inventory_modification$ language plpgsql;

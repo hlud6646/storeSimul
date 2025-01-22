@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "customers"
+version = "0.1.0"
+description = ""
+authors = ["Hugo Ludemann <hugo.ludemann@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+loguru = "^0.7.3"
+faker = "^33.3.0"
+sqlalchemy = "^2.0.37"
+psycopg2-binary = "^2.9.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
