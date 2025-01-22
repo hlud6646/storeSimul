@@ -6,3 +6,4 @@ products/logs
 suppliers/dist-newstyle
 suppliers/suppliers.log
 orders/mix.lock
+.metals

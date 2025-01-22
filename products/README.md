@@ -1,8 +1,28 @@
-## sbt project compiled with Scala 3
+# Products
 
-### Usage
+This is a **Scala** program that creates random products and adds them to the database.
 
-This is a normal sbt project. You can compile code with `sbt compile`, run it with `sbt run`, and `sbt console` will start a Scala 3 REPL.
+## Build the Jar
+Build an uber-jar with `sbt assembly`, which should output to
+`./target/scala-3.6.2/products-assembly-0.1.0-SNAPSHOT.jar`
+Then build the docker instance.
+Best to combine these two steps with
+`sbt assembly && docker build -t store/products .`
 
-For more information on the sbt-dotty plugin, see the
-[scala3-example-project](https://github.com/scala/scala3-example-project/blob/main/README.md).
+## Container
+The only dependencies in the docker container will be the java runtime and psql.
+
+## Run with environment variables on the store network:
+``` bash
+docker run --name store-products \
+  --network store-network \
+  -e DB_HOST=store-db \
+  -e DB_PORT=5432 \
+  -e DB_NAME=storesimul \
+  -e DB_USER=storesimul \
+  -e DB_PASSWORD=secret \
+  store/products:latest
+  ```
+
+## Questions
+- Is there any way to get compile time info about your database access?

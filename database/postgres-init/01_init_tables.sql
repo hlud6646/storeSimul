@@ -31,7 +31,7 @@ CREATE TABLE supplier_products
 (
     supplier_id integer NOT NULL references supplier (id),
     product_id  integer NOT NULL references product (id),
-    price       bigint  NOT NULL comment 'Price is in cents.',
+    price       bigint  NOT NULL,
     CONSTRAINT check_price CHECK ((price > 0)),
     primary key (supplier_id, product_id)
 );

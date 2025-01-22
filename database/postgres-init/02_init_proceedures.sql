@@ -54,13 +54,6 @@ execute function send_welcome_product();
 --
 -- To try and identify inventory inconsistencies, we now record any modifications.
 
-create or replace trigger inventory_audit
-    after update
-    on product
-    for each row
-execute function record_inventory_modification();
-
-
 create or replace function record_inventory_modification() returns trigger as
 $record_inventory_modification$
 begin
@@ -73,3 +66,13 @@ begin
     return null;
 end;
 $record_inventory_modification$ language plpgsql;
+
+
+create or replace trigger inventory_audit
+    after update
+    on product
+    for each row
+execute function record_inventory_modification();
+
+
+ 
