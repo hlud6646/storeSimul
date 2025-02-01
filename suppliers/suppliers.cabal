@@ -29,10 +29,11 @@ executable suppliers
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
+
     build-depends:
-        base ^>=4.17.2.0,
+        -- base ^>=4.17.2.0,
         fakedata ^>=1.0.3,
-        text ^>=2.0.2,
+        -- text ^>=2.0.2,
         bytestring ^>=0.11.5.2,
         postgresql-simple ^>=0.7.0.0,
         statistics ^>=0.16.2.1,
@@ -42,3 +43,6 @@ executable suppliers
 
     hs-source-dirs:   app
     default-language: Haskell2010
+
+    -- Static dependecy linking for dockerizing the application.
+    -- ld-options:          -static

@@ -10,7 +10,7 @@ python = "^3.12"
 loguru = "^0.7.3"
 faker = "^33.3.0"
 sqlalchemy = "^2.0.37"
-psycopg2 = "^2.9.10"
+psycopg2-binary = "^2.9.10"
 
 
 [build-system]

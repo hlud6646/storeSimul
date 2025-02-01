@@ -4,7 +4,7 @@ This image is a **Postgres** database server for the store.
 
 ## Building
 Nothing fancy:
-`docker build -t dev/database01 .`
+`docker build -t store/database01 .`
 
 ## Running
 ```bash
