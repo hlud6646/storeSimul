@@ -14,7 +14,7 @@ The only dependencies in the docker container will be the java runtime and psql.
 
 ## Run with environment variables on the store network:
 ``` bash
-docker run --name store-products \
+docker run --rm --name store-products \
   --network store-network \
   -e DB_HOST=store-db \
   -e DB_PORT=5432 \

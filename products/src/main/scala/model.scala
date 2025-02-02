@@ -12,7 +12,6 @@ case class Product(
 object Product {
   private val faker = new Faker(new Locale("en-AU"))
   private val rand = new util.Random
-  
 
   def random() = {
     new Product(

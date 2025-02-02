@@ -5,7 +5,7 @@ This **Python** program mimicks the creation of customers.
 
 ## Run with environment variables on the store network:
 ``` bash
-docker run --name store-customers \
+docker run --rm --name store-customers \
   --network store-network \
   -e DB_HOST=store-db \
   -e DB_PORT=5432 \
