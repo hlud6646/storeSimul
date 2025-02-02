@@ -4,7 +4,7 @@ This image is a **Postgres** database server for the store.
 
 ## Building
 Nothing fancy:
-`docker build -t store/database01 .`
+`docker build -t store/database .`
 
 ## Running
 ```bash
@@ -15,7 +15,7 @@ docker run --name store-db \
   -e POSTGRES_DB=storesimul \
   -v ./data:/var/lib/postgres/data \
   -p 5432:5432 \
-  -d dev/database01
+  -d store/database
 ```
 Note: The POSTGRES_PASSWORD env var is required by the `postgres` base image.
 
