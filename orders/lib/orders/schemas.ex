@@ -1,9 +1,9 @@
-# Orders.Order is the name of an Ecto schema.
-defmodule Orders.Order do
+# Orders.PurchaseOrder is the name of an Ecto schema.
+defmodule Orders.PurchaseOrder do
   use Ecto.Schema
 
-  # order is the name of a table in the database.
-  schema "order" do
+  # purchase_order is the name of a table in the database.
+  schema "purchase_order" do
     field(:customer, :integer)
     field(:created, :utc_datetime)
     field(:address, :string)
@@ -12,12 +12,12 @@ defmodule Orders.Order do
   end
 end
 
-defmodule Orders.OrderProduct do
+defmodule Orders.PurchaseOrderProduct do
   use Ecto.Schema
 
   @primary_key false
-  schema "order_products" do
-    field(:order, :integer)
+  schema "purchase_order_products" do
+    field(:purchase_order, :integer)
     field(:product, :integer)
     field(:quantity, :integer)
   end

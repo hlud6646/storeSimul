@@ -13,15 +13,11 @@ defmodule Orders.NewOrder do
 
     customer_id = get_random_customer_id()
     address = "#{street_address()}, #{city()}, #{zip_code()}, #{state()}"
-    {:ok, order} = Orders.Repo.insert(%Orders.Order{customer: customer_id, address: address})
+    {:ok, purchase_order} = Orders.Repo.insert(%Orders.PurchaseOrder{customer: customer_id, address: address})
     products = get_random_products(1 + :rand.uniform(10))
 
-    order_products = make_order_products(products, order)
-
-    order_products
+    make_order_products(products, purchase_order)
     |> Enum.each(&Orders.Repo.insert/1)
-
-    IO.inspect(order_products)
 
     {:ok, nil}
   end
@@ -41,11 +37,11 @@ defmodule Orders.NewOrder do
     |> Orders.Repo.all()
   end
 
-  def make_order_products(products, order) do
+  def make_order_products(products, purchase_order) do
     products
     |> Enum.map(fn product ->
-      %Orders.OrderProduct{
-        order: Map.fetch!(order, :id),
+      %Orders.PurchaseOrderProduct{
+        purchase_order: Map.fetch!(purchase_order, :id),
         product: Map.get(product, :id),
         quantity: min(:rand.uniform(30), Map.get(product, :inventory))
       }

@@ -2,8 +2,8 @@ import Config
 
 config :orders, Orders.Repo,
   database: "storesimul",
-  username: "storesimuladmin",
-  # password: "",
+  username: "storesimul",
+  password: "secret",
   hostname: "localhost",
   port: 5432
 
