@@ -1,20 +1,18 @@
 # Use the official Haskell Docker image based on Debian
-FROM haskell:9.10.1-slim-bullseye
+FROM store/base/haskell
 
-WORKDIR /opt/suppliers
+USER hugo
+WORKDIR /home/hugo
 
-RUN cabal update
-
-# Add just the .cabal file to capture dependencies
-COPY ./suppliers.cabal /opt/suppliers/suppliers.cabal
+COPY ./suppliers.cabal /home/hugo/suppliers.cabal
 
 # Docker will cache this command as a layer, freeing us up to
 # modify source code without re-installing dependencies
 # (unless the .cabal file changes!)
-RUN cabal build --only-dependencies -j4
+RUN cabal update && cabal build --only-dependencies -j4
 
 # Add and Install Application Code
-COPY . /opt/suppliers
+COPY ./app /home/hugo/app
 RUN cabal install
 
-CMD ["suppliers"]
+# CMD ["suppliers"]
