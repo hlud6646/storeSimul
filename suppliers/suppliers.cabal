@@ -31,7 +31,7 @@ executable suppliers
     -- other-extensions:
 
     build-depends:
-        base ^>=4.17.2.0,
+        base ^>=4.18.2.0,
         fakedata ^>=1.0.3,
         text ^>=2.0.2,
         bytestring ^>=0.11.5.2,
