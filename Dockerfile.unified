@@ -82,6 +82,18 @@ COPY customers/ .
 
 
 # ----------------------------------------------------------------------------------------------------
+# --- Dashboard API Builder ---
+FROM base AS dashboard-api-builder
+WORKDIR /app/dashboard-api
+RUN python3 -m venv .venv
+COPY dashboard-api/requirements.txt .
+RUN .venv/bin/pip install -r requirements.txt
+COPY dashboard-api/ .
+# ----------------------------------------------------------------------------------------------------
+
+
+
+# ----------------------------------------------------------------------------------------------------
 # --- Final Stage ---
 # Start from the base image to create the final image.
 FROM base
@@ -102,6 +114,9 @@ WORKDIR /app
 # --- Customers ---
 COPY --from=customers-builder /app/customers /app/customers
 
+# --- Dashboard API ---
+COPY --from=dashboard-api-builder /app/dashboard-api /app/dashboard-api
+
 # --- Products ---
 # Copying a prebuilt jar is not the way to do things, but after the experience of creating a 
 # build stage for a haskell project, I'm not keen to do the same for a JVM one. 
@@ -121,7 +136,7 @@ COPY --from=suppliers-builder /root/.cabal/store /root/.cabal/store
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Expose ports for all services
-EXPOSE 8001 8002 8003 8004
+EXPOSE 8001 8002 8003 8004 8005
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"] 
 

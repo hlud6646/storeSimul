@@ -8,3 +8,4 @@ suppliers/suppliers.log
 orders/mix.lock
 .metals
 .vscode
+node_modules

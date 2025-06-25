@@ -44,7 +44,10 @@ Tooo... Maybe emplyees should occasionally pack the wrong item.
 ## Dashboard
 
 A simple dashboard will show any DB interactions as they occur, a list of unshipped 
-orders etc.
+orders etc. To do that we'll need an API too...
+
+## Dashboard API
+Simple FastAPI that lets you peek at the databas/
 
 
 ## Containerisation
