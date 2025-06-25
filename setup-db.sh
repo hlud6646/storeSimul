@@ -11,6 +11,10 @@ if [ ! -d "/var/lib/postgresql/data/base" ]; then
     # Initialize DB
     su - postgres -c "/usr/lib/postgresql/15/bin/initdb -D /var/lib/postgresql/data"
 
+    # Allow connections from any host
+    echo "host all all 0.0.0.0/0 scram-sha-256" >> /var/lib/postgresql/data/pg_hba.conf
+    echo "host all all ::/0 scram-sha-256" >> /var/lib/postgresql/data/pg_hba.conf
+
     # Start postgres to run init scripts
     su - postgres -c "/usr/lib/postgresql/15/bin/pg_ctl -D /var/lib/postgresql/data -o \"-c listen_addresses='*'\" -w start"
 
@@ -19,6 +23,7 @@ if [ ! -d "/var/lib/postgresql/data/base" ]; then
     psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
         CREATE USER storesimul WITH PASSWORD 'secret';
         CREATE DATABASE store OWNER storesimul;
+        ALTER USER storesimul WITH SUPERUSER;
 EOSQL
 
     # Run custom init scripts
