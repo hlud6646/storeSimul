@@ -536,11 +536,15 @@ readRandomProducts conn = do
                     https://github.com/hlud6646/storeSimul/blob/main/dashboard-api/main.py
                   </a>
                 </div>
-                This dashboard is powered by a simple FastAPI service that exposes a few endpoints to query the database.
+                This dashboard is powered by a simple FastAPI service that exposes the database schema as a REST API.
+                I let the llm run wild with this one, and it provided a good example of building to the job. Where I
+                would have reached for `SqlAlchemy`` and subclassed `pydantic.Basemodel`, it just wrote some SQL in the 
+                API handler, and made the handler return a list of python dictionaries. FastApi is smart enough to 
+                convert this to JSON.
               </CardContent>
             </Card>
 
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <CardTitle>Endpoints</CardTitle>
               </CardHeader>
@@ -567,7 +571,7 @@ def read_recent_orders():
 `}
                 />
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
         </TabsContent>
       </Tabs>

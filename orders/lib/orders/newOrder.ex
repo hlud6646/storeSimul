@@ -15,8 +15,8 @@ defmodule Orders.NewOrder do
   import Ecto.Query
   import Faker.Address.En
 
-  @min_delay 1000
-  @max_delay 3000
+  @min_delay 3000
+  @max_delay 6000
 
   def start_link(_) do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)

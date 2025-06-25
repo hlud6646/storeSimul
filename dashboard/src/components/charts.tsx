@@ -1,6 +1,6 @@
 "use client";
 
-import { Bar, Line } from "react-chartjs-2";
+import { Line, Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,9 +11,8 @@ import {
   Legend,
   PointElement,
   LineElement,
-  ChartOptions,
-  ChartData,
 } from "chart.js";
+import type { ChartData, ChartOptions } from "chart.js";
 import { useEffect, useState } from "react";
 
 ChartJS.register(
@@ -27,7 +26,7 @@ ChartJS.register(
   LineElement
 );
 
-export const options: ChartOptions<"bar"> = {
+export const options: ChartOptions<'bar'> = {
   responsive: true,
   plugins: {
     legend: {
@@ -40,15 +39,12 @@ export const options: ChartOptions<"bar"> = {
   },
 };
 
-export const BarChart: React.FC<{ data: ChartData<"bar">; options?: ChartOptions<"bar"> }> = ({
-  data,
-  options,
-}) => {
-  return <Bar data={data} options={options} />;
-};
+export function BarChart({ data, options }: { data: ChartData<'bar'>, options?: ChartOptions<'bar'> }) {
+    return <Bar options={options} data={data} />;
+}
 
 export function OrdersLineChart() {
-  const [chartData, setChartData] = useState<ChartData<"line">>({
+  const [chartData, setChartData] = useState<ChartData<'line'>>({
     labels: [],
     datasets: [],
   });
@@ -58,14 +54,15 @@ export function OrdersLineChart() {
       try {
         const response = await fetch("http://localhost:8005/orders_over_time");
         const data = await response.json();
-        const labels = data.map((item: { date: string }) => item.date);
-        const values = data.map((item: { orders: number }) => item.orders);
+        data.reverse();
+        const labels = data.map((item) => item.date);
+        const values = data.map((item) => item.orders);
 
         setChartData({
           labels,
           datasets: [
             {
-              label: "Recent Orders",
+              label: "Orders per 10 seconds",
               data: values,
               borderColor: "rgb(75, 192, 192)",
               tension: 0.1,
@@ -78,19 +75,19 @@ export function OrdersLineChart() {
     }
 
     fetchOrders();
-    const interval = setInterval(fetchOrders, 2000);
+    const interval = setInterval(fetchOrders, 2000); 
 
     return () => clearInterval(interval);
   }, []);
 
-  const chartOptions: ChartOptions<"line"> = {
+  const chartOptions: ChartOptions<'line'> = {
     responsive: true,
     plugins: {
       legend: {
         position: "top" as const,
       },
       title: {
-        display: false,
+        display: true,
         text: "Orders Over Time",
       },
     },

@@ -77,6 +77,27 @@ def read_new_customers():
     conn.close()
     return [{ "id": c[0], "name": c[1], "email": c[2], "joined": c[3].strftime('%Y-%m-%d') } for c in customers]
 
+@app.get("/orders_over_time")
+def read_orders_over_time():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT
+            date_trunc('second', created) - (EXTRACT(SECOND FROM created)::int %% 10) * interval '1 second' as time_window,
+            COUNT(id) as order_count
+        FROM
+            purchase_order
+        GROUP BY
+            time_window
+        ORDER BY
+            time_window DESC
+        LIMIT 10;
+    """)
+    orders_data = cur.fetchall()
+    cur.close()
+    conn.close()
+    return [{ "date": row[0].strftime('%H:%M:%S'), "orders": row[1] } for row in orders_data]
+
 @app.get("/top_customers")
 def read_top_customers():
     conn = get_db_connection()
@@ -93,27 +114,6 @@ def read_top_customers():
     cur.close()
     conn.close()
     return [{ "name": c[0], "orders": c[1] } for c in customers]
-
-@app.get("/orders_over_time")
-def read_orders_over_time():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("""
-        SELECT
-            to_timestamp(floor((extract(epoch from created) / 300)) * 300) AT TIME ZONE 'UTC' as time_window,
-            COUNT(id) as order_count
-        FROM
-            purchase_order
-        GROUP BY
-            time_window
-        ORDER BY
-            time_window DESC
-        LIMIT 10;
-    """)
-    orders_data = cur.fetchall()
-    cur.close()
-    conn.close()
-    return [{ "date": row[0].isoformat(), "orders": row[1] } for row in reversed(orders_data)]
 
 @app.get("/product_supply_resilience")
 def read_product_supply_resilience():
@@ -183,4 +183,4 @@ def read_supplier_product_proportion():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8005) 
+    uvicorn.run(app, host="0.0.0.0", port=8005)
