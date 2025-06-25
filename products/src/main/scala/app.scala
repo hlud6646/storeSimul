@@ -20,7 +20,7 @@ object Main extends App {
     try {
       writeNewProduct(connection)
       waitTime =
-        ExponentialDistribution(1 * SECONDS_PER_MINUTE).sample().toInt * 1000
+        ExponentialDistribution(1 * SECONDS_PER_MINUTE).sample().toInt * 10
       Thread.sleep(waitTime)
     } catch {
       case e: Exception => e.printStackTrace()

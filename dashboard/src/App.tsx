@@ -8,7 +8,7 @@ import "./index.css";
 import { RecentOrders } from "./components/RecentOrders";
 import { TopProducts } from "./components/TopProducts";
 import { NewCustomers } from "./components/NewCustomers";
-import { OrdersChart } from "./components/OrdersChart";
+import { BarChart, OrdersLineChart } from "./components/charts.js";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CodeBlock } from "./components/CodeBlock";
 import { useState, useEffect } from "react";
@@ -87,6 +87,9 @@ export function App() {
         <TabsContent value="orders" className="mt-4">
           <div className="space-y-4">
 
+            <OrdersLineChart />
+
+
             <Card>
               {/* <CardHeader> */}
               {/* <CardTitle>Source Code</CardTitle> */}
@@ -107,7 +110,6 @@ export function App() {
               </CardContent>
             </Card>
 
-            {/* <OrdersChart /> */}
 
             <Card>
               <CardHeader>

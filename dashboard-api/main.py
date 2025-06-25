@@ -83,7 +83,7 @@ def read_orders_over_time():
     cur = conn.cursor()
     cur.execute("""
         SELECT
-            to_timestamp(floor((extract(epoch from created) / 300)) * 300) AT TIME ZONE 'UTC' as time_window,
+            to_timestamp(floor((extract(epoch from created) / 10)) * 10) AT TIME ZONE 'UTC' as time_window,
             COUNT(id) as order_count
         FROM
             purchase_order

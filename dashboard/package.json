@@ -3,8 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "main": "src/index.tsx",
-  "module": "src/index.tsx",
   "scripts": {
     "dev": "bun --hot src/index.tsx",
     "start": "NODE_ENV=production bun src/index.tsx",
@@ -20,6 +18,7 @@
     "bun-plugin-tailwind": "^0.0.14",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "lucide-react": "^0.523.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.58.1",
@@ -27,11 +26,13 @@
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.10",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.25.67"
+    "zod": "^3.25.67",
+    "chart.js": "^4.5.0",
+    "react-chartjs-2": "^5.3.0"
   },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6"
   }
-}
+} 

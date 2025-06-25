@@ -44,4 +44,4 @@ while True:
         session.add(customer)
         session.commit()
         logger.info(f'New customer: {customer} written to database.')
-    sleep(exponential(1 * SECONDS_PER_MINUTE) * 1000)
+    sleep(exponential(1 * SECONDS_PER_MINUTE) * 10)
