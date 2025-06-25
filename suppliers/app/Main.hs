@@ -136,7 +136,7 @@ sleep = do
   gen <- createSystemRandom
   let dist = exponential 0.05
   waitTime <- genContVar dist gen
-  threadDelay (round (waitTime * 10000))
+  threadDelay (round (waitTime * 150000))
   return ()
 
 -- Log the new supplier.

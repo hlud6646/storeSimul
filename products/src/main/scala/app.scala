@@ -1,4 +1,4 @@
-import Database.writeNewProduct
+import Database.{assignProductToSupplier, getSupplierIds, writeNewProduct}
 import org.apache.commons.math3.distribution.ExponentialDistribution
 import java.sql.{Connection, DriverManager, ResultSet}
 
@@ -18,9 +18,17 @@ object Main extends App {
 
   while (true) {
     try {
-      writeNewProduct(connection)
+      val newProductId = writeNewProduct(connection)
+      val supplierIds = getSupplierIds(connection)
+      if (supplierIds.nonEmpty) {
+        val numSuppliers = util.Random.nextInt(3) + 1
+        val randomSuppliers = util.Random.shuffle(supplierIds).take(numSuppliers)
+        for (supplierId <- randomSuppliers) {
+          assignProductToSupplier(connection, newProductId, supplierId)
+        }
+      }
       waitTime =
-        ExponentialDistribution(1 * SECONDS_PER_MINUTE).sample().toInt * 10
+        new ExponentialDistribution(1 * SECONDS_PER_MINUTE).sample().toInt * 10
       Thread.sleep(waitTime)
     } catch {
       case e: Exception => e.printStackTrace()

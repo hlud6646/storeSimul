@@ -8,10 +8,13 @@ import "./index.css";
 import { RecentOrders } from "./components/RecentOrders";
 import { TopProducts } from "./components/TopProducts";
 import { NewCustomers } from "./components/NewCustomers";
-import { BarChart, OrdersLineChart } from "./components/charts.js";
+import { TopCustomersChart } from "./components/TopCustomersChart";
+import { OrdersLineChart } from "./components/charts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CodeBlock } from "./components/CodeBlock";
 import { useState, useEffect } from "react";
+import { ProductSupplyResilienceChart } from "./components/ProductSupplyResilienceChart";
+import { SupplierProductProportionChart } from "./components/SupplierProductProportionChart";
 
 export function App() {
   const [activeTab, setActiveTab] = useState(() => {
@@ -24,7 +27,7 @@ export function App() {
 
   return (
     <div className="container mx-auto p-8 max-w-[900px]">
-      <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-4">Store Simulation</h1>
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
@@ -50,8 +53,8 @@ export function App() {
                 randomly generated customers, orders etc.  It's a kooky learning project
                 with each part of the store modelled as a microservice in a different
                 language.  Each service has some common components, like data-faking,
-                database interface, logging etc. In addition to the microservices, this
-                dashboard contains a tiny API for this dashboard to call.
+                database interface, logging etc. In addition to the microservices,
+                there's a tiny API for this dashboard to call.
               </p>
               <br />
               <p >
@@ -62,24 +65,13 @@ export function App() {
                 but is overkill for a toy project.  Now all services run in a single
                 debian derived image. This is unrealistic, but it works.  The disadvantage is that you have to
                 install postgres and haskell on the server by yourself, which is painful (it's uncommon to have
-                build your own database image and Haskell makes everything difficult).
+                build your own database image, and Haskell makes everything difficult).
                 To simplify even further there is no attached volume for the database, and so
                 there is no data persistance. This is obviously very bad for a database but fine for this
                 project.
               </p>
             </CardContent>
           </Card>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="col-span-1 lg:col-span-2">
-              <RecentOrders />
-            </div>
-            <div className="col-span-1">
-              <TopProducts />
-            </div>
-            <div className="col-span-1">
-              <NewCustomers />
-            </div>
-          </div>
         </TabsContent>
 
 
@@ -87,7 +79,17 @@ export function App() {
         <TabsContent value="orders" className="mt-4">
           <div className="space-y-4">
 
-            <OrdersLineChart />
+            <Card>
+              {/* <CardHeader>
+                <CardTitle>Orders Over Time</CardTitle>
+              </CardHeader> */}
+              <CardContent>
+                <OrdersLineChart />
+              </CardContent>
+            </Card>
+
+
+
 
 
             <Card>
@@ -106,12 +108,13 @@ export function App() {
                   </a>
                 </div>
                 This process mocks the arrival of new orders by periodically picking a customer and some products and
-                writing a new purchase order to the database.
+                writing a new purchase order to the database. It's an OTP application written in Elixir, using the
+                very lovely Ecto library for database interaction.
               </CardContent>
             </Card>
 
 
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <CardTitle>Schema</CardTitle>
               </CardHeader>
@@ -141,10 +144,10 @@ CREATE TABLE purchase_order
 );`}
                 />
               </CardContent>
-            </Card>
+            </Card> */}
 
 
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <CardTitle>Elixir + OTP + Ecto</CardTitle>
               </CardHeader>
@@ -187,7 +190,7 @@ CREATE TABLE purchase_order
                   </p>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
             {/* <Card>
               <CardHeader>
                 <CardTitle>Code Examples</CardTitle>
@@ -196,7 +199,10 @@ CREATE TABLE purchase_order
                 <p>No code examples available for this service.</p>
               </CardContent>
             </Card> */}
-            <RecentOrders />
+
+
+
+
           </div>
         </TabsContent>
 
@@ -204,6 +210,7 @@ CREATE TABLE purchase_order
 
         <TabsContent value="customers" className="mt-4">
           <div className="space-y-4">
+            <TopCustomersChart />
             <Card>
               <CardContent>
                 <div className="p-2">
@@ -217,10 +224,11 @@ CREATE TABLE purchase_order
                   </a>
                 </div>
                 The customers service is a simple Python program which periodically creates a new customer record.
+                It uses the SQLAlchemy object relational mapper to interact with the database.
               </CardContent>
             </Card>
 
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <CardTitle>Schema</CardTitle>
               </CardHeader>
@@ -266,7 +274,7 @@ class Customer(Base):
 `}
                 />
               </CardContent>
-            </Card>
+            </Card> */}
 
 
             <Card>
@@ -280,9 +288,9 @@ class Customer(Base):
                 customer record is created. All it does is pick a random product, decrement the inventory
                 by one, and create a new purchase order for the customer.
 
-                You can see the general pattern for this in the block below. You first create a function,
-                a trigger that executes the function on a certain database event.
-                <CodeBlock
+                It follows the general pattern of first creating a function in `plpgsql`,
+                and then a trigger that executes the function on certain database events.
+                {/* <CodeBlock
                   language="sql"
                   code={`
 CREATE OR REPLACE FUNCTION send_welcome_product() RETURNS TRIGGER AS
@@ -325,15 +333,20 @@ CREATE OR REPLACE TRIGGER welcome_product
     ON customer
     FOR EACH ROW
 EXECUTE FUNCTION send_welcome_product();`}
-                />
+                /> */}
               </CardContent>
             </Card>
 
-            <NewCustomers />
+            {/* <NewCustomers /> */}
           </div>
         </TabsContent>
+
+
+
+
         <TabsContent value="products" className="mt-4">
           <div className="space-y-4">
+            <ProductSupplyResilienceChart />
             <Card>
               <CardContent>
                 <div className="p-2">
@@ -347,10 +360,12 @@ EXECUTE FUNCTION send_welcome_product();`}
                   </a>
                 </div>
                 The Products service is written in Scala and periodically creates new products and writes them to the database.
+                It uses the Java.Sql interface to interact with the database. This is a simple solution (not a fancy ORM).
+                It's nice to be reminded of how strong the ineterop can be between different languages on the JVM.
               </CardContent>
             </Card>
 
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <CardTitle>Schema</CardTitle>
               </CardHeader>
@@ -403,14 +418,23 @@ def writeNewProduct(connection: Connection) = {
   }
 }
 `}
-                />
-              </CardContent>
-            </Card>
-            <TopProducts />
+                /> */}
+            {/* </CardContent>
+            </Card> */}
+            {/* <TopProducts /> */}
           </div>
         </TabsContent>
+
+
+
+
+
+
+
+
         <TabsContent value="suppliers" className="mt-4">
           <div className="space-y-4">
+            <SupplierProductProportionChart />
             <Card>
               <CardContent>
                 <div className="p-2">
@@ -429,7 +453,7 @@ def writeNewProduct(connection: Connection) = {
               </CardContent>
             </Card>
 
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <CardTitle>Schema</CardTitle>
               </CardHeader>
@@ -458,9 +482,9 @@ CREATE TABLE supplier_products
 );`}
                 />
               </CardContent>
-            </Card>
+            </Card> */}
 
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <CardTitle>Haskell + postgresql-simple</CardTitle>
               </CardHeader>
@@ -491,9 +515,13 @@ readRandomProducts conn = do
 `}
                 />
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
         </TabsContent>
+
+
+
+
         <TabsContent value="api" className="mt-4">
           <div className="space-y-4">
             <Card>

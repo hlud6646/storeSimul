@@ -11,6 +11,8 @@ import {
   Legend,
   PointElement,
   LineElement,
+  ChartOptions,
+  ChartData,
 } from "chart.js";
 import { useEffect, useState } from "react";
 
@@ -25,11 +27,11 @@ ChartJS.register(
   LineElement
 );
 
-export const options = {
+export const options: ChartOptions<"bar"> = {
   responsive: true,
   plugins: {
     legend: {
-      position: "top",
+      position: "top" as const,
     },
     title: {
       display: true,
@@ -38,8 +40,15 @@ export const options = {
   },
 };
 
+export const BarChart: React.FC<{ data: ChartData<"bar">; options?: ChartOptions<"bar"> }> = ({
+  data,
+  options,
+}) => {
+  return <Bar data={data} options={options} />;
+};
+
 export function OrdersLineChart() {
-  const [chartData, setChartData] = useState({
+  const [chartData, setChartData] = useState<ChartData<"line">>({
     labels: [],
     datasets: [],
   });
@@ -49,14 +58,14 @@ export function OrdersLineChart() {
       try {
         const response = await fetch("http://localhost:8005/orders_over_time");
         const data = await response.json();
-        const labels = data.map((item) => item.date);
-        const values = data.map((item) => item.orders);
+        const labels = data.map((item: { date: string }) => item.date);
+        const values = data.map((item: { orders: number }) => item.orders);
 
         setChartData({
           labels,
           datasets: [
             {
-              label: "Orders per 10 seconds",
+              label: "Recent Orders",
               data: values,
               borderColor: "rgb(75, 192, 192)",
               tension: 0.1,
@@ -69,19 +78,19 @@ export function OrdersLineChart() {
     }
 
     fetchOrders();
-    const interval = setInterval(fetchOrders, 10000); 
+    const interval = setInterval(fetchOrders, 2000);
 
     return () => clearInterval(interval);
   }, []);
 
-  const chartOptions = {
+  const chartOptions: ChartOptions<"line"> = {
     responsive: true,
     plugins: {
       legend: {
-        position: "top",
+        position: "top" as const,
       },
       title: {
-        display: true,
+        display: false,
         text: "Orders Over Time",
       },
     },
@@ -89,25 +98,3 @@ export function OrdersLineChart() {
 
   return <Line options={chartOptions} data={chartData} />;
 }
-
-const labels = ["January", "February", "March", "April", "May", "June", "July"];
-
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: "Dataset 1",
-      data: labels.map(() => Math.random() * 1000),
-      backgroundColor: "rgba(255, 99, 132, 0.5)",
-    },
-    {
-      label: "Dataset 2",
-      data: labels.map(() => Math.random() * 1000),
-      backgroundColor: "rgba(53, 162, 235, 0.5)",
-    },
-  ],
-};
-
-export function BarChart() {
-  return <Bar options={options} data={data} />;
-} 

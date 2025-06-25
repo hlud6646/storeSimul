@@ -5,10 +5,9 @@ import org.slf4j.LoggerFactory
 
 object Database {
   val logger = LoggerFactory.getLogger(Main.getClass)
-  def writeNewProduct(connection: Connection) = {
-    val statement = connection.createStatement()
+  def writeNewProduct(connection: Connection): Int = {
     val sql =
-      "INSERT INTO product (name, material, color, department, inventory) VALUES (?, ?, ?, ?, ?)"
+      "INSERT INTO product (name, material, color, department, inventory) VALUES (?, ?, ?, ?, ?) RETURNING id"
     val preparedStatement = connection.prepareStatement(sql)
 
     val product = Product.random()
@@ -18,9 +17,37 @@ object Database {
     preparedStatement.setString(4, product.department)
     preparedStatement.setInt(5, product.inventory)
 
-    val rowsInserted = preparedStatement.executeUpdate()
-    if (rowsInserted > 0) {
-      logger.info(s"New product: $product")
+    val rs = preparedStatement.executeQuery()
+    if (rs.next()) {
+      val newId = rs.getInt(1)
+      logger.info(s"New product (id=$newId): $product")
+      newId
+    } else {
+      throw new RuntimeException("Failed to insert new product, no ID obtained.")
     }
+  }
+
+  def getSupplierIds(connection: Connection): List[Int] = {
+    val statement = connection.createStatement()
+    val rs = statement.executeQuery("SELECT id FROM supplier")
+    var ids = List.empty[Int]
+    while (rs.next()) {
+      ids = rs.getInt("id") :: ids
+    }
+    ids
+  }
+
+  def assignProductToSupplier(
+      connection: Connection,
+      productId: Int,
+      supplierId: Int
+  ): Unit = {
+    val sql =
+      "INSERT INTO supplier_products (product_id, supplier_id, price) VALUES (?, ?, ?)"
+    val preparedStatement = connection.prepareStatement(sql)
+    preparedStatement.setInt(1, productId)
+    preparedStatement.setInt(2, supplierId)
+    preparedStatement.setInt(3, (new util.Random).nextInt(100000) + 100)
+    preparedStatement.executeUpdate()
   }
 }

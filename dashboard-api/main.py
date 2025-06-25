@@ -77,25 +77,109 @@ def read_new_customers():
     conn.close()
     return [{ "id": c[0], "name": c[1], "email": c[2], "joined": c[3].strftime('%Y-%m-%d') } for c in customers]
 
+@app.get("/top_customers")
+def read_top_customers():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT c.name, COUNT(po.id) as order_count
+        FROM customer c
+        JOIN purchase_order po ON c.id = po.customer
+        GROUP BY c.name
+        ORDER BY order_count DESC
+        LIMIT 5;
+    """)
+    customers = cur.fetchall()
+    cur.close()
+    conn.close()
+    return [{ "name": c[0], "orders": c[1] } for c in customers]
+
 @app.get("/orders_over_time")
 def read_orders_over_time():
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("""
         SELECT
-            to_timestamp(floor((extract(epoch from created) / 10)) * 10) AT TIME ZONE 'UTC' as time_window,
+            to_timestamp(floor((extract(epoch from created) / 300)) * 300) AT TIME ZONE 'UTC' as time_window,
             COUNT(id) as order_count
         FROM
             purchase_order
         GROUP BY
             time_window
         ORDER BY
-            time_window;
+            time_window DESC
+        LIMIT 10;
     """)
     orders_data = cur.fetchall()
     cur.close()
     conn.close()
-    return [{ "date": row[0].strftime('%Y-%m-%d %H:%M:%S'), "orders": row[1] } for row in orders_data]
+    return [{ "date": row[0].isoformat(), "orders": row[1] } for row in reversed(orders_data)]
+
+@app.get("/product_supply_resilience")
+def read_product_supply_resilience():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT
+            p.name,
+            p.inventory,
+            COUNT(sp.supplier_id) AS supplier_count
+        FROM
+            product p
+        JOIN
+            supplier_products sp ON p.id = sp.product_id
+        GROUP BY
+            p.id, p.name, p.inventory
+        HAVING
+            COUNT(sp.supplier_id) > 0
+        ORDER BY
+            (CASE WHEN COUNT(sp.supplier_id) = 1 THEN 1 WHEN COUNT(sp.supplier_id) = 2 THEN 2 ELSE 3 END), 
+            supplier_count ASC
+        LIMIT 5;
+    """)
+    products = cur.fetchall()
+    cur.close()
+    conn.close()
+    return [{"name": p[0], "inventory": p[1], "suppliers": p[2]} for p in products]
+
+@app.get("/supplier_product_proportion")
+def read_supplier_product_proportion():
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    cur.execute("SELECT count(*) FROM product;")
+    total_products = cur.fetchone()[0]
+
+    if total_products == 0:
+        cur.close()
+        conn.close()
+        return []
+
+    cur.execute("""
+        WITH ranked_suppliers AS (
+            SELECT
+                s.name,
+                count(sp.product_id) as product_count,
+                RANK() OVER (ORDER BY count(sp.product_id) DESC) as rank_desc,
+                RANK() OVER (ORDER BY count(sp.product_id) ASC) as rank_asc
+            FROM supplier s
+            JOIN supplier_products sp on s.id = sp.supplier_id
+            GROUP BY s.name
+        )
+        SELECT name, product_count
+        FROM ranked_suppliers
+        WHERE rank_desc <= 5 OR rank_asc <= 5
+        ORDER BY product_count DESC
+        LIMIT 10;
+    """)
+    supplier_proportions = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    return [{
+        "name": row[0],
+        "proportion": (row[1] / total_products) if total_products > 0 else 0
+    } for row in supplier_proportions]
 
 if __name__ == "__main__":
     import uvicorn
