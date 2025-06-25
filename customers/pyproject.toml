@@ -6,7 +6,7 @@ authors = ["Hugo Ludemann <hugo.ludemann@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.11"
 loguru = "^0.7.3"
 faker = "^33.3.0"
 sqlalchemy = "^2.0.37"

@@ -7,11 +7,11 @@ object Main extends App {
   val SECONDS_PER_MINUTE = 60
   var waitTime: Int = 0
 
-  val host = sys.env.getOrElse("DB_HOST", "store-db")
-  val port = sys.env.getOrElse("DB_PORT", "5432")
-  val dbName = sys.env.getOrElse("DB_NAME", "storesimul")
-  val username = sys.env.getOrElse("DB_USER", "storesimul")
-  val password = sys.env.getOrElse("DB_PASSWORD", "secret")
+  val host = sys.env.getOrElse("POSTGRES_HOST", "store-db")
+  val port = sys.env.getOrElse("POSTGRES_PORT", "5432")
+  val dbName = sys.env.getOrElse("POSTGRES_DB", "store")
+  val username = sys.env.getOrElse("POSTGRES_USER", "storesimul")
+  val password = sys.env.getOrElse("POSTGRES_PASSWORD", "secret")
 
   val url = s"jdbc:postgresql://$host:$port/$dbName"
   val connection = DriverManager.getConnection(url, username, password)

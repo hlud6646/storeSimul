@@ -1,56 +1,59 @@
 # Fake Store
 
-
 This is a pretty kooky project and exists entirely for learning.
 It is essesntially a simulation of a shop, with a database recording
 customers, product inventory, orders etc. 
 
 The inital idea was to have a project that showed a lot of database
-knowledge, but this seems to be branching out in a few different angles.
-For example, the project also addresses
-- App factories in Java, Python etc.
+knowledge, but it has branched out into:
+- App frameworks in Java, Python etc.
 - Database toolkits in the same;
-- Containerisation;
-- Azure
+- Containerisation.
 
-Since each part of the store is managed by a process in a different language, 
-the same basic programming constructs are encountered in a variety of styles. 
-It's interesting to see how Haskell/Elixir/Python... hande 
+Each part of the store is managed in a different language, but confronts similar tasks.
+These are 
 - IO;
 - Database connectivity;
 - Logging;
 - Statistics;
 - Data-faking.
 
+
 ## Components
+These are the components of the simulation that are currently running.
 
-### Customers
-This is a Python project managed with Poetry. Sqlalchemy is used as an ORM to 
-interact with the database.
+### Customers (Python)
+Built with Poetry. Sqlalchemy is used as an ORM to interact with the database.
 
-### Products
-Scala app managed with Sbt. I avoided the very complicated looking 
+### Products (Scala)
+Built with Sbt. I avoided the very complicated looking 
 Typelevel solutions for DB interaction and went for a basic aproach with java.sql.
 
-### Suppliers
-Haskell app managed with cabal. Best fake data library of the lot.
+### Suppliers (Haskell)
+Built with cabal. Best fake data library of the lot. Not surprisingly, this was the most
+comlicated, especialyl when it came to getting a working haskell compiler on a container. 
+The current `docker compose build --no-cache suppliers` is above 10 minutes and not finished...
 
-### Orders
-Elixir app using fully featured Ecto ORM system. This one is my favourite.
+### Orders (Elixir)
+Built with Mix, using the fully featured Ecto ORM system. This one is my favourite database API.
 
-
-### Employees
-TODO in Java...
+### Employees (Java)
+Tooo... Maybe emplyees should occasionally pack the wrong item.
 
 
 ## Dashboard
 
-A simple dashboard should show any DB interactions as they occur, a list of unshipped 
+A simple dashboard will show any DB interactions as they occur, a list of unshipped 
 orders etc.
 
 
-## Todo
-Maybe this is taking it too far, but it would be funny to have some employees pack the wrong
-orders and things like that.
+## Containerisation
+Initially I had a realistic architecture with each microservice defining it's own image, with
+docker compose tying it all together.  This was good to play with, but is overkill for a toy project.
+The new version has all services running in a single debian derived image. This is bad, but it works.
+The disadvantage is that you have to install postgres and haskell on the server by yourself, which is 
+a bit of a slog.
 
-
+The single image also holds the database, and to simplify even further there is no attached volume. This
+means that there is no data persistance, which is obviously very bad for a database but fine for this 
+project.

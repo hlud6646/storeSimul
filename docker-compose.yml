@@ -1,0 +1,67 @@
+# This is a docker compose configuration for the full application, with each service in its own container.
+
+
+services:
+  database:
+    build:
+      context: ./database
+    environment:
+      POSTGRES_DB: store
+      POSTGRES_USER: store
+      POSTGRES_PASSWORD: store123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U store"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  customers:
+    build:
+      context: ./customers
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://store:store123@database:5432/store
+    ports:
+      - "8001:8001"
+
+  products:
+    build:
+      context: ./products
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://store:store123@database:5432/store
+    ports:
+      - "8002:8002"
+
+  orders:
+    build:
+      context: ./orders
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://store:store123@database:5432/store
+    ports:
+      - "8003:8003"
+
+  suppliers:
+    build:
+      context: ./suppliers
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://store:store123@database:5432/store
+    ports:
+      - "8004:8004"
+
+volumes:
+  postgres_data: 

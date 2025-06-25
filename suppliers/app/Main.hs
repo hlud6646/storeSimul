@@ -8,12 +8,11 @@ import Control.Monad (void)
 import Data.ByteString (ByteString)
 import Data.ByteString.Char8 (pack)
 import Data.Int (Int64)
+import Data.Maybe (fromMaybe)
 import Data.Text (Text)
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.FromRow (field, fromRow)
 import Database.PostgreSQL.Simple.ToField (toField)
-import Data.Maybe (fromMaybe)
-import System.Environment (getEnv, lookupEnv)
 import Database.PostgreSQL.Simple.ToRow (toRow)
 import Faker
 import qualified Faker.Address as FAddress
@@ -22,6 +21,7 @@ import qualified Faker.Name as FName
 import qualified Faker.PhoneNumber as FPhone
 import Statistics.Distribution (ContGen (genContVar))
 import Statistics.Distribution.Exponential (exponential)
+import System.Environment (getEnv, lookupEnv)
 import System.Log.FastLogger
 import System.Random (StdGen, newStdGen, randomRIO, randomRs)
 import System.Random.MWC (GenIO, createSystemRandom)
@@ -29,32 +29,32 @@ import System.Random.MWC (GenIO, createSystemRandom)
 -- Data types.
 data Supplier = Supplier
   { supplier_name :: Text,
-    address       :: Text,
-    phone         :: Text,
-    email         :: Text
+    address :: Text,
+    phone :: Text,
+    email :: Text
   }
   deriving (Show)
 
 data Product = Product
-  { product_name  :: Text,
-    material      :: Text,
-    color         :: Text,
-    department    :: Text
+  { product_name :: Text,
+    material :: Text,
+    color :: Text,
+    department :: Text
   }
 
 data SupplierProduct = SupplierProduct
-  { supplier_id   :: Int,
-    product_id    :: Int,
-    price         :: Int
+  { supplier_id :: Int,
+    product_id :: Int,
+    price :: Int
   }
 
 -- Fake data generation for suppliers.
 fakeSupplier :: Fake Supplier
 fakeSupplier = do
   supplier_name <- FCompany.name
-  address       <- FAddress.fullAddress
-  phone         <- FPhone.cellPhoneFormat
-  email         <- FCompany.email
+  address <- FAddress.fullAddress
+  phone <- FPhone.cellPhoneFormat
+  email <- FCompany.email
   pure $ Supplier {..}
 
 -- Database instances and connection config.
@@ -70,25 +70,30 @@ instance ToRow SupplierProduct where
 -- postgresql://[user[:password]@][host][:port][/dbname][?param1=value1&...]
 getConnectionString :: IO ByteString
 getConnectionString = do
-    pgUser      <- lookupEnv "POSTGRES_USER"
-    pgPassword  <- lookupEnv "POSTGRES_PASSWORD"
-    pgHost      <- lookupEnv "POSTGRES_HOST"
-    pgPort      <- lookupEnv "POSTGRES_PORT"
-    pgDatabase  <- lookupEnv "POSTGRES_DB"
+  pgUser <- lookupEnv "POSTGRES_USER"
+  pgPassword <- lookupEnv "POSTGRES_PASSWORD"
+  pgHost <- lookupEnv "POSTGRES_HOST"
+  pgPort <- lookupEnv "POSTGRES_PORT"
+  pgDatabase <- lookupEnv "POSTGRES_DB"
 
-    let user     = fromMaybe "storesimul" pgUser
-        password = fromMaybe "secret" pgPassword
-        host     = fromMaybe "localhost" pgHost
-        port     = fromMaybe "5432" pgPort
-        database = fromMaybe "storesimul" pgDatabase
+  let user = fromMaybe "storesimul" pgUser
+      password = fromMaybe "secret" pgPassword
+      host = fromMaybe "localhost" pgHost
+      port = fromMaybe "5432" pgPort
+      database = fromMaybe "storesimul" pgDatabase
 
-    return $ pack $ "postgresql://" ++
-                    user ++ ":" ++
-                    password ++ "@" ++
-                    host ++ ":" ++
-                    port ++ "/" ++
-                    database
-
+  return $
+    pack $
+      "postgresql://"
+        ++ user
+        ++ ":"
+        ++ password
+        ++ "@"
+        ++ host
+        ++ ":"
+        ++ port
+        ++ "/"
+        ++ database
 
 -- Insert a random supplier and return the new id.
 writeNewSupplier :: Connection -> IO Int
@@ -115,9 +120,10 @@ generateRandomPrice = randomRIO (100, 1000000) -- Adjust the range as needed.
 
 writeSupplierProducts :: Connection -> Int -> [Int] -> IO ()
 writeSupplierProducts conn supplierID productIds = do
-  supplierProducts <- mapM
-    (\productId -> SupplierProduct (fromIntegral supplierID) productId <$> generateRandomPrice)
-    productIds
+  supplierProducts <-
+    mapM
+      (\productId -> SupplierProduct (fromIntegral supplierID) productId <$> generateRandomPrice)
+      productIds
   void $
     executeMany
       conn
@@ -155,7 +161,8 @@ loop conn =
 
 main :: IO ()
 main = do
-    connectionUrl <- getConnectionString
-    conn <- connectPostgreSQL connectionUrl
-    loop conn
-    -- TODO: Does this close the connection properly?
+  connectionUrl <- getConnectionString
+  conn <- connectPostgreSQL connectionUrl
+  loop conn
+
+-- TODO: Does this close the connection properly?

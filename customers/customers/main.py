@@ -18,7 +18,7 @@ def exponential(rate):
 
 # Configure logging.
 log_dir = Path(__file__).parent.parent / 'logs'
-log_dir.mkdir()
+log_dir.mkdir(exist_ok=True)
 log_path = log_dir / 'create_customer.log'
 if not log_path.exists():
     log_path.touch()

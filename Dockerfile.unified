@@ -1,0 +1,128 @@
+# Unified Dockerfile for all services.
+# You take complexity from the docker-compose.unified.yml file, and put it here.
+# This exercise has taught me that building a complicated docker image is a pain.
+
+# ----------------------------------------------------------------------------------------------------
+# --- Base Stage ---
+# Use Debian Bookworm as base, as it's the most versatile for our needs.
+FROM debian:bookworm-slim AS base
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install dependencies for all services
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    # General dependencies
+    curl git gnupg netbase pkg-config supervisor \
+    # Python (for customers)
+    python3 python3-pip pipx \
+    # Java (for products)
+    openjdk-17-jre-headless \
+    # Elixir (for orders)
+    elixir \
+    # Haskell (for suppliers)
+    ghc cabal-install \
+    # Postgres client (for all services)
+    postgresql-client \
+    # More stuff for Haskell
+    libpq-dev \
+    libstdc++-12-dev \
+    g++ \
+    # Postgres server (for database)
+    postgresql postgresql-contrib && \
+    rm -rf /var/lib/apt/lists/*
+
+# --- Health Checks ---
+RUN python3 --version && \
+    java -version && \
+    elixir --version && \
+    ghc --version && \
+    psql --version && \
+    supervisord --version
+# ----------------------------------------------------------------------------------------------------
+
+
+
+# ----------------------------------------------------------------------------------------------------
+# --- Suppliers Builder ---
+FROM base AS suppliers-builder
+WORKDIR /app/suppliers
+COPY suppliers/suppliers.cabal .
+RUN cabal update && \
+    cabal build --only-dependencies
+COPY suppliers .
+RUN cabal install --install-method=copy --overwrite-policy=always
+# ----------------------------------------------------------------------------------------------------
+
+
+
+# ----------------------------------------------------------------------------------------------------
+# --- Orders Builder ---
+FROM base AS orders-builder
+WORKDIR /app/orders
+COPY orders/mix.exs orders/mix.lock ./
+RUN mix local.rebar --force && \
+    mix local.hex --force && \
+    mix deps.get && \
+    mix compile
+# ----------------------------------------------------------------------------------------------------
+
+
+
+# ----------------------------------------------------------------------------------------------------
+# --- Customers Builder ---
+FROM base AS customers-builder
+WORKDIR /app/customers
+RUN pipx install poetry
+COPY customers/pyproject.toml customers/poetry.lock* ./
+RUN /root/.local/bin/poetry config virtualenvs.in-project true && \
+    /root/.local/bin/poetry install --no-interaction --no-ansi --no-root
+COPY customers/ .
+# ----------------------------------------------------------------------------------------------------
+
+
+
+# ----------------------------------------------------------------------------------------------------
+# --- Final Stage ---
+# Start from the base image to create the final image.
+FROM base
+
+# --- Database Setup ---
+# This is placed early in the final stage. It will only be rebuilt if these files change.
+COPY ./database/postgres-init /docker-entrypoint-initdb.d/
+COPY ./setup-db.sh /usr/local/bin/setup-db.sh
+RUN chmod +x /usr/local/bin/setup-db.sh
+
+# Create app directory
+WORKDIR /app
+
+# The sections below are commented out.
+# As you re-enable your services, you can uncomment these sections and add corresponding builder stages.
+# A full multi-stage setup would have a builder for each service, and you'd copy the build artifacts here.
+
+# --- Customers ---
+COPY --from=customers-builder /app/customers /app/customers
+
+# --- Products ---
+# Copying a prebuilt jar is not the way to do things, but after the experience of creating a 
+# build stage for a haskell project, I'm not keen to do the same for a JVM one. 
+COPY ./products/target/scala-3.6.2/products-assembly-0.1.0-SNAPSHOT.jar /app/products/app.jar
+
+# --- Orders ---
+COPY --from=orders-builder /app/orders/_build /app/orders/_build
+COPY --from=orders-builder /app/orders/deps /app/orders/deps
+COPY --from=orders-builder /app/orders/mix.exs /app/orders/mix.lock ./
+COPY ./orders /app/orders
+
+# --- Suppliers ---
+COPY --from=suppliers-builder /root/.cabal/bin/suppliers /app/suppliers/
+COPY --from=suppliers-builder /root/.cabal/store /root/.cabal/store
+
+# --- Supervisor ---
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Expose ports for all services
+EXPOSE 8001 8002 8003 8004
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"] 
+
+# ----------------------------------------------------------------------------------------------------
