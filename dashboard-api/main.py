@@ -163,21 +163,14 @@ def read_supplier_product_proportion():
         return []
 
     cur.execute("""
-        WITH ranked_suppliers AS (
-            SELECT
-                s.name,
-                count(sp.product_id) as product_count,
-                RANK() OVER (ORDER BY count(sp.product_id) DESC) as rank_desc,
-                RANK() OVER (ORDER BY count(sp.product_id) ASC) as rank_asc
-            FROM supplier s
-            JOIN supplier_products sp on s.id = sp.supplier_id
-            GROUP BY s.name
-        )
-        SELECT name, product_count
-        FROM ranked_suppliers
-        WHERE rank_desc <= 5 OR rank_asc <= 5
+        SELECT
+            s.name,
+            count(sp.product_id) as product_count
+        FROM supplier s
+        JOIN supplier_products sp on s.id = sp.supplier_id
+        GROUP BY s.name
         ORDER BY product_count DESC
-        LIMIT 10;
+        LIMIT 5;
     """)
     supplier_proportions = cur.fetchall()
     cur.close()
@@ -187,6 +180,21 @@ def read_supplier_product_proportion():
         "name": row[0],
         "proportion": (row[1] / total_products) if total_products > 0 else 0
     } for row in supplier_proportions]
+
+@app.get("/products_by_department")
+def read_products_by_department():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT department, count(id) as product_count
+        FROM product
+        GROUP BY department
+        ORDER BY product_count DESC
+    """)
+    data = cur.fetchall()
+    cur.close()
+    conn.close()
+    return [{ "department": row[0], "count": row[1] } for row in data]
 
 if __name__ == "__main__":
     import uvicorn

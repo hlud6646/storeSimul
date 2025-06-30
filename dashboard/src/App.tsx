@@ -9,6 +9,8 @@ import { TopProducts } from "./components/TopProducts";
 import { NewCustomers } from "./components/NewCustomers";
 import { TopCustomersChart } from "./components/TopCustomersChart";
 import { OrdersLineChart } from "./components/OrdersLineChart";
+import { ProductDepartmentPieChart } from "./components/ProductDepartmentPieChart";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CodeBlock } from "./components/CodeBlock";
 import { useState, useEffect } from "react";
@@ -111,97 +113,6 @@ export function App() {
                 very lovely Ecto library for database interaction.
               </CardContent>
             </Card>
-
-
-            {/* <Card>
-              <CardHeader>
-                <CardTitle>Schema</CardTitle>
-              </CardHeader>
-              <CardContent>
-                Nothing exciting here. There's a non-null foreign key constraint,
-                since every order must be associated with a customer.
-                Timestamps are recorded with a timezone because
-                <a
-                  href="https://justatheory.com/2012/04/postgres-use-timestamptz/"
-                  className="text-blue-500 hover:underline"
-                >
-                  {" "}that's what you do.{" "}
-                </a>
-                Note that you won't have a table called "order" in an SQL database,
-                because that's a reserved word.
-                <CodeBlock
-                  language="sql"
-                  code={`
-CREATE TABLE purchase_order
-(
-    id         SERIAL PRIMARY KEY,
-    customer   INTEGER                   NOT NULL REFERENCES customer (id),
-    created    TIMESTAMPTZ DEFAULT now() NOT NULL,
-    packed     TIMESTAMPTZ,
-    dispatched TIMESTAMPTZ,
-    address    TEXT                      NOT NULL
-);`}
-                />
-              </CardContent>
-            </Card> */}
-
-
-            {/* <Card>
-              <CardHeader>
-                <CardTitle>Elixir + OTP + Ecto</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                </div>
-                <div>
-                  <p>
-                    This microservice is an OTP application written in Elixir.
-                    It periodically creates a new purchase order and writes it to the database.
-
-                    Out of all the database drivers used in the project, Ecto was the most
-                    pleasant. You start by defining the schema, which is like a bridge between
-                    the database and the elixir environment.
-
-                    For example, to pull products from the database you would write:
-                    <CodeBlock
-                      language="elixir"
-                      code={`
-  schema "product" do
-    field(:name, :string)
-    field(:material, :string)
-    field(:color, :string)
-    field(:department, :string)
-    field(:inventory, :integer)
-  end                      `}
-                    />
-                    If you wanted to pull some random products from the database, you could write
-                    <CodeBlock
-                      language="elixir"
-                      code={`
-  defp get_random_products(n) do
-    Orders.Product
-    |> Ecto.Query.order_by(fragment("RANDOM()"))
-    |> Ecto.Query.limit(^n)
-    |> Orders.Repo.all()
-  end                      `}
-                    />
-                    where the chain of function calls is structurally similar to what you would write in SQL.
-                  </p>
-                </div>
-              </CardContent>
-            </Card> */}
-            {/* <Card>
-              <CardHeader>
-                <CardTitle>Code Examples</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p>No code examples available for this service.</p>
-              </CardContent>
-            </Card> */}
-
-
-
-
           </div>
         </TabsContent>
 
@@ -226,56 +137,6 @@ CREATE TABLE purchase_order
                 It uses the SQLAlchemy object relational mapper to interact with the database.
               </CardContent>
             </Card>
-
-            {/* <Card>
-              <CardHeader>
-                <CardTitle>Schema</CardTitle>
-              </CardHeader>
-              <CardContent>
-                This is a fairly simple table definition that ensures email addresses are unique and demonstrates
-                field validation. In reality you might use a more sophisticated validation strategy for email addresses
-                but this is the general pattern for inline validation.
-                <CodeBlock
-                  language="sql"
-                  code={`
-CREATE TABLE customer
-(
-    email           TEXT UNIQUE,
-    id              SERIAL PRIMARY KEY,
-    name            TEXT                      NOT NULL,
-    created         TIMESTAMP DEFAULT now()   NOT NULL,
-    primary_address TEXT                      NOT NULL,
-    CONSTRAINT check_email CHECK ((email ~~ '%@%'::TEXT))
-); `}
-                />
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Python + SQLAlchemy</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                This program is simple, but I still wanted to use SQLAlchemy to see how the full ORM layer felt
-                in Python. I don't like it much.
-                <CodeBlock
-                  language="python"
-                  code={`
-class Base(DeclarativeBase):
-    pass
-
-class Customer(Base):
-    __tablename__                = "customer"
-    id: Mapped[int]              = mapped_column(primary_key=True)
-    name: Mapped[str]            = mapped_column(String())
-    email: Mapped[str]           = mapped_column(String())
-    primary_address: Mapped[str] = mapped_column(String())
-`}
-                />
-              </CardContent>
-            </Card> */}
-
-
             <Card>
               <CardHeader>
                 <CardTitle>SQL Functions</CardTitle>
@@ -345,7 +206,7 @@ EXECUTE FUNCTION send_welcome_product();`}
 
         <TabsContent value="products" className="mt-4">
           <div className="space-y-4">
-            <ProductSupplyResilienceChart />
+            <ProductDepartmentPieChart />
             <Card>
               <CardContent>
                 <div className="p-2">

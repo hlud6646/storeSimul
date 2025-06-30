@@ -72,14 +72,18 @@ export function SupplierProductProportionChart() {
           },
         },
       },
+      title: {
+        display: true,
+        text: "Supplier Contribution to Product Catalog",
+      },
     },
   };
 
   return (
     <Card>
-      <CardHeader>
+      {/* <CardHeader>
         <CardTitle>Supplier Contribution to Product Catalog</CardTitle>
-      </CardHeader>
+      </CardHeader> */}
       <CardContent>
         <BarChart data={chartData} options={chartOptions} />
       </CardContent>

@@ -42,7 +42,7 @@ export function OrdersLineChart() {
           labels,
           datasets: [
             {
-              label: "Orders per 2 seconds",
+              // label: "Incoming Orders",
               data: values,
               borderColor: "rgb(75, 192, 192)",
               tension: 0.1,
@@ -63,9 +63,10 @@ export function OrdersLineChart() {
   const chartOptions: ChartOptions<'line'> = {
     responsive: true,
     plugins: {
-      legend: {
-        position: "top" as const,
-      },
+        legend: {
+          position: "top" as const,
+          display: false,
+        },
       title: {
         display: true,
         text: "Orders Over Time",

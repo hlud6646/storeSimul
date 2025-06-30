@@ -27,6 +27,10 @@ export function TopCustomersChart() {
       legend: {
         display: false,
       },
+      title: {
+        display: true,
+        text: "Top 5 Customers",
+      },
     },
   };
 
@@ -61,9 +65,9 @@ export function TopCustomersChart() {
 
   return (
     <Card>
-      <CardHeader>
+      {/* <CardHeader>
         <CardTitle>Top 5 Customers</CardTitle>
-      </CardHeader>
+      </CardHeader> */}
       <CardContent>
         <BarChart data={chartData} options={chartOptions} />
       </CardContent>

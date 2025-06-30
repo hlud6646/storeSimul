@@ -1,6 +1,6 @@
 "use client";
 
-import { Bar } from "react-chartjs-2";
+import { Bar, Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,6 +9,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  ArcElement,
 } from "chart.js";
 import type { ChartData, ChartOptions } from "chart.js";
 
@@ -18,10 +19,11 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ArcElement
 );
 
-export const options: ChartOptions<'bar'> = {
+export const options: ChartOptions<"bar"> = {
   responsive: true,
   plugins: {
     legend: {
@@ -34,6 +36,27 @@ export const options: ChartOptions<'bar'> = {
   },
 };
 
-export function BarChart({ data, options }: { data: ChartData<'bar'>, options?: ChartOptions<'bar'> }) {
-    return <Bar options={options} data={data} />;
+export function BarChart({ 
+  data, 
+  options,
+  title,
+}: { 
+  data: ChartData<'bar'>, 
+  options?: ChartOptions<'bar'>, 
+  title?: string 
+}) {
+  const chartOptions = {
+    ...options,
+  }
+  return <Bar options={options} data={data} />;
+}
+
+export function PieChart({
+  data,
+  options,
+}: {
+  data: ChartData<"pie">;
+  options?: ChartOptions<"pie">;
+}) {
+  return <Pie data={data} options={options} />;
 }
