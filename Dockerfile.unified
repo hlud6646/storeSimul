@@ -34,13 +34,18 @@ RUN apt-get update && \
     postgresql postgresql-contrib && \
     rm -rf /var/lib/apt/lists/*
 
+# Install bun - needed for dashboard
+RUN curl -fsSL https://bun.sh/install | bash
+ENV PATH="/root/.bun/bin:$PATH"
+
 # --- Health Checks ---
 RUN python3 --version && \
     java -version && \
     elixir --version && \
     ghc --version && \
     psql --version && \
-    supervisord --version
+    supervisord --version && \
+    bun --version
 # ----------------------------------------------------------------------------------------------------
 
 
@@ -97,6 +102,22 @@ COPY dashboard-api/ .
 
 
 # ----------------------------------------------------------------------------------------------------
+# --- Dashboard Builder ---
+# This stage builds the React dashboard application.
+FROM base AS dashboard-builder
+WORKDIR /app/dashboard
+# Copy package manifests and install dependencies
+COPY dashboard/package.json dashboard/bun.lock* ./
+RUN bun install --frozen-lockfile
+# Copy the rest of the application source
+COPY dashboard/ . .
+# Build the application
+RUN bun run build
+# ----------------------------------------------------------------------------------------------------
+
+
+
+# ----------------------------------------------------------------------------------------------------
 # --- Final Stage ---
 # Start from the base image to create the final image.
 FROM base
@@ -104,21 +125,20 @@ FROM base
 # --- Database Setup ---
 # This is placed early in the final stage. It will only be rebuilt if these files change.
 COPY ./database/postgres-init /docker-entrypoint-initdb.d/
-COPY ./setup-db.sh /usr/local/bin/setup-db.sh
+COPY ./database/setup-db.sh /usr/local/bin/setup-db.sh
 RUN chmod +x /usr/local/bin/setup-db.sh
 
 # Create app directory
 WORKDIR /app
-
-# The sections below are commented out.
-# As you re-enable your services, you can uncomment these sections and add corresponding builder stages.
-# A full multi-stage setup would have a builder for each service, and you'd copy the build artifacts here.
 
 # --- Customers ---
 COPY --from=customers-builder /app/customers /app/customers
 
 # --- Dashboard API ---
 COPY --from=dashboard-api-builder /app/dashboard-api /app/dashboard-api
+
+# --- Dashboard ---
+COPY --from=dashboard-builder /app/dashboard /app/dashboard
 
 # --- Products ---
 # Copying a prebuilt jar is not the way to do things, but after the experience of creating a 
