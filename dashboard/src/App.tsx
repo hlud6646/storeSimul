@@ -5,16 +5,12 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import "./index.css";
-import { TopProducts } from "./components/TopProducts";
-import { NewCustomers } from "./components/NewCustomers";
 import { TopCustomersChart } from "./components/TopCustomersChart";
 import { OrdersLineChart } from "./components/OrdersLineChart";
 import { ProductDepartmentPieChart } from "./components/ProductDepartmentPieChart";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CodeBlock } from "./components/CodeBlock";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState, useEffect } from "react";
-import { ProductSupplyResilienceChart } from "./components/ProductSupplyResilienceChart";
 import { SupplierProductProportionChart } from "./components/SupplierProductProportionChart";
 
 export function App() {
@@ -27,414 +23,236 @@ export function App() {
   }, [activeTab]);
 
   return (
-    <div className="container mx-auto p-8 max-w-[900px]">
-      <h1 className="text-3xl font-bold mb-4">Store Simulation</h1>
-      <Tabs
-        value={activeTab}
-        onValueChange={setActiveTab}
-        className="w-full"
-      >
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="home">Home</TabsTrigger>
-          <TabsTrigger value="orders">Orders</TabsTrigger>
-          <TabsTrigger value="customers">Customers</TabsTrigger>
-          <TabsTrigger value="products">Products</TabsTrigger>
-          <TabsTrigger value="suppliers">Suppliers</TabsTrigger>
-          <TabsTrigger value="api">API</TabsTrigger>
-        </TabsList>
-        <TabsContent value="home" className="mt-4">
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle>WTF is this?</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>
-                If you don't work with SQL databases but want to learn about them, you
-                need to make one.  This project mocks up a simple online store, with
-                randomly generated customers, orders etc.  It's a kooky learning project
-                with each part of the store modelled as a microservice in a different
-                language.  Each service has some common components, like data-faking,
-                database interface, logging etc. In addition to the microservices,
-                there's a tiny API for this dashboard to call.
-              </p>
-              <br />
-              <p >
-                What started as a project to learn about databases morphed into an
-                experiment in containerisation.  Initially I had a more realistic
-                architecture with each microservice defining it's own docker image,
-                and a docker compose file tying it all together.  This was good to play with,
-                but is overkill for a toy project.  Now all services run in a single
-                debian derived image. This is unrealistic, but it works.  The disadvantage is that you have to
-                install postgres and haskell on the server by yourself, which is painful (it's uncommon to have
-                build your own database image, and Haskell makes everything difficult).
-                To simplify even further there is no attached volume for the database, and so
-                there is no data persistance. This is obviously very bad for a database but fine for this
-                project.
-              </p>
-            </CardContent>
-          </Card>
-        </TabsContent>
+    <div className="flex min-h-screen w-full flex-col">
+      <header className="sticky top-0 z-10 flex h-auto flex-col items-center bg-background px-4">
+        <div className="w-full max-w-[900px] py-4">
+          <h1 className="text-3xl font-bold">Store Simulation</h1>
+        </div>
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="w-full max-w-[900px]"
+        >
+          <TabsList className="grid w-full grid-cols-6">
+            <TabsTrigger value="home">Home</TabsTrigger>
+            <TabsTrigger value="orders">Orders</TabsTrigger>
+            <TabsTrigger value="customers">Customers</TabsTrigger>
+            <TabsTrigger value="products">Products</TabsTrigger>
+            <TabsTrigger value="suppliers">Suppliers</TabsTrigger>
+            <TabsTrigger value="api">API</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </header>
+      <main className="flex flex-col items-center p-8">
+        <div className="w-full max-w-[900px]">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="w-full"
+          >
+            <TabsContent value="home" className="mt-4">
+              <Card className="mb-8">
+                <CardHeader>
+                  <CardTitle>WTF is this?</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p>
+                    If you don't work with SQL databases but want to learn about
+                    them, you need to make one. This project mocks up a simple
+                    online store, with randomly generated customers, orders etc.
+                    It's a kooky learning project with each part of the store
+                    modelled as a microservice in a different language. Each
+                    service has some common components, like data-faking,
+                    database interface, logging etc. In addition to the
+                    microservices, there's a tiny API for this dashboard to
+                    call.
+                  </p>
+                  <br />
+                  <p>
+                    What started as a project to learn about databases morphed
+                    into an experiment in containerisation. Initially I had a
+                    more realistic architecture with each microservice defining
+                    it's own docker image, and a docker compose file tying it
+                    all together. This was good to play with, but is overkill
+                    for a toy project. Now all services run in a single debian
+                    derived image. This is unrealistic, but it works. The
+                    disadvantage is that you have to install postgres and
+                    haskell on the server by yourself, which is painful (it's
+                    uncommon to build your own database image, and Haskell
+                    makes everything difficult). To simplify even further there
+                    is no attached volume for the database, and so there is no
+                    data persistance. This is obviously very bad for a database
+                    but fine for this project.
+                  </p>
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-
-        {/* Orders */}
-        <TabsContent value="orders" className="mt-4">
-          <div className="space-y-4">
-
-            <Card>
-              {/* <CardHeader>
+            {/* Orders */}
+            <TabsContent value="orders" className="mt-4">
+              <div className="space-y-4">
+                <Card>
+                  {/* <CardHeader>
                 <CardTitle>Orders Over Time</CardTitle>
               </CardHeader> */}
-              <CardContent>
-                <OrdersLineChart />
-              </CardContent>
-            </Card>
+                  <CardContent>
+                    <OrdersLineChart />
+                  </CardContent>
+                </Card>
 
+                <Card>
+                  {/* <CardHeader> */}
+                  {/* <CardTitle>Source Code</CardTitle> */}
+                  {/* </CardHeader> */}
+                  <CardContent>
+                    <div className="p-2">
+                      <a
+                        href="https://github.com/hlud6646/storeSimul/blob/main/orders/lib/orders/newOrder.ex"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline text-sm"
+                      >
+                        https://github.com/hlud6646/storeSimul/blob/main/orders/lib/orders/newOrder.ex
+                      </a>
+                    </div>
+                    This process mocks the arrival of new orders by periodically
+                    picking a customer and some products and writing a new
+                    purchase order to the database. It's an OTP application
+                    written in Elixir, using the very lovely Ecto library for
+                    database interaction.
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
 
+            <TabsContent value="customers" className="mt-4">
+              <div className="space-y-4">
+                <TopCustomersChart />
+                <Card>
+                  <CardContent>
+                    <div className="p-2">
+                      <a
+                        href="https://github.com/hlud6646/storeSimul/blob/main/customers/customers/main.py"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline text-sm"
+                      >
+                        https://github.com/hlud6646/storeSimul/blob/main/customers/customers/main.py
+                      </a>
+                    </div>
+                    The customers service is a simple Python program which
+                    periodically creates a new customer record. It uses the
+                    SQLAlchemy object relational mapper to interact with the
+                    database.
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>SQL Functions</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    When a new customer joins ths store, we send them a welcome
+                    gift. This is implemented at the database level with a
+                    trigger and a function that is loaded after the tables are
+                    created. The function is executed whenever a new customer
+                    record is created. All it does is pick a random product,
+                    decrement the inventory by one, and create a new purchase
+                    order for the customer. It follows the general pattern of
+                    first creating a function in `plpgsql`, and then a trigger
+                    that executes the function on certain database events.
+                  </CardContent>
+                </Card>
 
+                {/* <NewCustomers /> */}
+              </div>
+            </TabsContent>
 
+            <TabsContent value="products" className="mt-4">
+              <div className="space-y-4">
+                <ProductDepartmentPieChart />
+                <Card>
+                  <CardContent>
+                    <div className="p-2">
+                      <a
+                        href="https://github.com/hlud6646/storeSimul/blob/main/products/src/main/scala/app.scala"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline text-sm"
+                      >
+                        https://github.com/hlud6646/storeSimul/blob/main/products/src/main/scala/app.scala
+                      </a>
+                    </div>
+                    The Products service is written in Scala and periodically
+                    creates new products and writes them to the database. It
+                    uses the Java.Sql interface to interact with the database.
+                    This is a simple solution (not a fancy ORM). It's nice to be
+                    reminded of how strong the ineterop can be between different
+                    languages on the JVM.
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
 
-            <Card>
-              {/* <CardHeader> */}
-              {/* <CardTitle>Source Code</CardTitle> */}
-              {/* </CardHeader> */}
-              <CardContent>
-                <div className="p-2">
-                  <a
-                    href="https://github.com/hlud6646/storeSimul/blob/main/orders/lib/orders/newOrder.ex"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline text-sm"
-                  >
-                    https://github.com/hlud6646/storeSimul/blob/main/orders/lib/orders/newOrder.ex
-                  </a>
-                </div>
-                This process mocks the arrival of new orders by periodically picking a customer and some products and
-                writing a new purchase order to the database. It's an OTP application written in Elixir, using the
-                very lovely Ecto library for database interaction.
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
+            <TabsContent value="suppliers" className="mt-4">
+              <div className="space-y-4">
+                <SupplierProductProportionChart />
+                <Card>
+                  <CardContent>
+                    <div className="p-2">
+                      <a
+                        href="https://github.com/hlud6646/storeSimul/blob/main/suppliers/app/Main.hs"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline text-sm"
+                      >
+                        https://github.com/hlud6646/storeSimul/blob/main/suppliers/app/Main.hs
+                      </a>
+                    </div>
+                    The Suppliers service is a Haskell program that periodically
+                    adds new suppliers and the products they offer to the
+                    database. It uses the
+                    <a
+                      href="https://hackage.haskell.org/package/postgresql-simple"
+                      className="text-blue-500 hover:underline"
+                    >
+                      {" "}
+                      postgresql-simple{" "}
+                    </a>
+                    library to interact with the database.
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
 
-
-
-        <TabsContent value="customers" className="mt-4">
-          <div className="space-y-4">
-            <TopCustomersChart />
-            <Card>
-              <CardContent>
-                <div className="p-2">
-                  <a
-                    href="https://github.com/hlud6646/storeSimul/blob/main/customers/customers/main.py"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline text-sm"
-                  >
-                    https://github.com/hlud6646/storeSimul/blob/main/customers/customers/main.py
-                  </a>
-                </div>
-                The customers service is a simple Python program which periodically creates a new customer record.
-                It uses the SQLAlchemy object relational mapper to interact with the database.
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>SQL Functions</CardTitle>
-              </CardHeader>
-              <CardContent>
-                When a new customer joins ths store, we send them a welcome gift.
-                This is implemented at the database level with a trigger and a function that
-                is loaded after the tables are created.  The function is executed whenever a new
-                customer record is created. All it does is pick a random product, decrement the inventory
-                by one, and create a new purchase order for the customer.
-
-                It follows the general pattern of first creating a function in `plpgsql`,
-                and then a trigger that executes the function on certain database events.
-                {/* <CodeBlock
-                  language="sql"
-                  code={`
-CREATE OR REPLACE FUNCTION send_welcome_product() RETURNS TRIGGER AS
-$welcome_product$
-DECLARE
-    product_id        INTEGER;
-    purchase_order_id INTEGER;
-BEGIN
-    -- Create a new order for this customer, keeping the order_id.
-    INSERT INTO purchase_order(customer, address)
-    VALUES (NEW.id, NEW.primary_address)
-    RETURNING id INTO purchase_order_id;
-
-    -- Decrement the inventory of a randomly selected product and keep the id.
-    SELECT id
-    INTO product_id
-    FROM product
-    WHERE product.inventory >= 1
-    ORDER BY random()
-    LIMIT 1;
-    UPDATE product SET inventory = inventory - 1 WHERE id = product_id;
-
-    -- Add this product to the new order.
-    INSERT INTO purchase_order_products(purchase_order, product, quantity)
-    VALUES (purchase_order_id, product_id, 1);
-
-    RAISE NOTICE 'New customer: %', NEW.id;
-    RAISE NOTICE 'Created order %', purchase_order_id;
-    RAISE NOTICE 'Added product % to order', product_id;
-
-    -- Return is ignored since this is an AFTER trigger, but the editor wants one.
-    RETURN NULL;
-END;
-
-$welcome_product$ LANGUAGE plpgsql;
-
-
-CREATE OR REPLACE TRIGGER welcome_product
-    AFTER INSERT
-    ON customer
-    FOR EACH ROW
-EXECUTE FUNCTION send_welcome_product();`}
-                /> */}
-              </CardContent>
-            </Card>
-
-            {/* <NewCustomers /> */}
-          </div>
-        </TabsContent>
-
-
-
-
-        <TabsContent value="products" className="mt-4">
-          <div className="space-y-4">
-            <ProductDepartmentPieChart />
-            <Card>
-              <CardContent>
-                <div className="p-2">
-                  <a
-                    href="https://github.com/hlud6646/storeSimul/blob/main/products/src/main/scala/app.scala"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline text-sm"
-                  >
-                    https://github.com/hlud6646/storeSimul/blob/main/products/src/main/scala/app.scala
-                  </a>
-                </div>
-                The Products service is written in Scala and periodically creates new products and writes them to the database.
-                It uses the Java.Sql interface to interact with the database. This is a simple solution (not a fancy ORM).
-                It's nice to be reminded of how strong the ineterop can be between different languages on the JVM.
-              </CardContent>
-            </Card>
-
-            {/* <Card>
-              <CardHeader>
-                <CardTitle>Schema</CardTitle>
-              </CardHeader>
-              <CardContent>
-                The <code>product</code> table is simple, but it is referenced by several other tables,
-                making it a central part of the database schema.
-                <CodeBlock
-                  language="sql"
-                  code={`
-CREATE TABLE product
-(
-    id         SERIAL PRIMARY KEY,
-    name       TEXT    NOT NULL,
-    material   TEXT,
-    color      TEXT,
-    department TEXT    NOT NULL,
-    inventory  INTEGER NOT NULL,
-    CONSTRAINT check_inventory CHECK ((inventory >= 0))
-);`}
-                />
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Scala + JDBC</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                This service uses the Java Database Connectivity (JDBC) API to interact with the PostgreSQL database.
-                Below is an example of how a new product is created and inserted into the database.
-                <CodeBlock
-                  language="scala"
-                  code={`
-def writeNewProduct(connection: Connection) = {
-  val statement = connection.createStatement()
-  val sql =
-    "INSERT INTO product (name, material, color, department, inventory) VALUES (?, ?, ?, ?, ?)"
-  val preparedStatement = connection.prepareStatement(sql)
-
-  val product = Product.random()
-  preparedStatement.setString(1, product.name)
-  preparedStatement.setString(2, product.material)
-  preparedStatement.setString(3, product.color)
-  preparedStatement.setString(4, product.department)
-  preparedStatement.setInt(5, product.inventory)
-
-  val rowsInserted = preparedStatement.executeUpdate()
-  if (rowsInserted > 0) {
-    logger.info(s"New product: $product")
-  }
-}
-`}
-                /> */}
-            {/* </CardContent>
-            </Card> */}
-            {/* <TopProducts /> */}
-          </div>
-        </TabsContent>
-
-
-
-
-
-
-
-
-        <TabsContent value="suppliers" className="mt-4">
-          <div className="space-y-4">
-            <SupplierProductProportionChart />
-            <Card>
-              <CardContent>
-                <div className="p-2">
-                  <a
-                    href="https://github.com/hlud6646/storeSimul/blob/main/suppliers/app/Main.hs"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline text-sm"
-                  >
-                    https://github.com/hlud6646/storeSimul/blob/main/suppliers/app/Main.hs
-                  </a>
-                </div>
-                The Suppliers service is a Haskell program that periodically adds new suppliers and the products they offer to the database. It uses the
-                <a href="https://hackage.haskell.org/package/postgresql-simple" className="text-blue-500 hover:underline"> postgresql-simple </a>
-                library to interact with the database.
-              </CardContent>
-            </Card>
-
-            {/* <Card>
-              <CardHeader>
-                <CardTitle>Schema</CardTitle>
-              </CardHeader>
-              <CardContent>
-                A supplier can provide many products, and a product can be offered by many suppliers.
-                This many-to-many relationship is modelled with a join table, <code>supplier_products</code>,
-                that connects the <code>supplier</code> and <code>product</code> tables.
-                <CodeBlock
-                  language="sql"
-                  code={`
-CREATE TABLE supplier
-(
-    id      SERIAL PRIMARY KEY,
-    name    TEXT NOT NULL,
-    address TEXT NOT NULL,
-    phone   TEXT,
-    email   TEXT NOT NULL
-);
-
-CREATE TABLE supplier_products
-(
-    id          SERIAL PRIMARY KEY,
-    supplier_id INTEGER NOT NULL REFERENCES supplier (id),
-    product_id  INTEGER NOT NULL REFERENCES product (id),
-    price       INTEGER NOT NULL
-);`}
-                />
-              </CardContent>
-            </Card> */}
-
-            {/* <Card>
-              <CardHeader>
-                <CardTitle>Haskell + postgresql-simple</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                The <code>postgresql-simple</code> library provides a straightforward way to interact with a PostgreSQL database.
-                You can see how a new supplier record is created and how product IDs are fetched. Note the use of <code>query</code> and <code>query_</code> for statements with and without parameters.
-                <CodeBlock
-                  language="haskell"
-                  code={`
--- Insert a random supplier and return the new id.
-writeNewSupplier :: Connection -> IO Int
-writeNewSupplier conn = do
-  supplier <- generateNonDeterministic fakeSupplier
-  [Only id] <-
-    query
-      conn
-      "INSERT INTO supplier (name, address, phone, email) \\
-      \\ VALUES (?, ?, ?, ?) \\
-      \\ RETURNING id"
-      supplier
-  return id
-
--- Pull 20 random product ids from the database.
-readRandomProducts :: Connection -> IO [Int]
-readRandomProducts conn = do
-  ids <- query_ conn "SELECT id FROM product ORDER BY RANDOM() LIMIT 20"
-  return $ map fromOnly ids
-`}
-                />
-              </CardContent>
-            </Card> */}
-          </div>
-        </TabsContent>
-
-
-
-
-        <TabsContent value="api" className="mt-4">
-          <div className="space-y-4">
-            <Card>
-              <CardContent>
-                <div className="p-2">
-                  <a
-                    href="https://github.com/hlud6646/storeSimul/blob/main/dashboard-api/main.py"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline text-sm"
-                  >
-                    https://github.com/hlud6646/storeSimul/blob/main/dashboard-api/main.py
-                  </a>
-                </div>
-                This dashboard is powered by a simple FastAPI service that exposes the database schema as a REST API.
-                I let the llm run wild with this one, and it provided a good example of building to the job. Where I
-                would have reached for `SqlAlchemy`` and subclassed `pydantic.Basemodel`, it just wrote some SQL in the 
-                API handler, and made the handler return a list of python dictionaries. FastApi is smart enough to 
-                convert this to JSON.
-              </CardContent>
-            </Card>
-
-            {/* <Card>
-              <CardHeader>
-                <CardTitle>Endpoints</CardTitle>
-              </CardHeader>
-              <CardContent>
-                The API provides a few simple endpoints to fetch data for the dashboard. For example, the <code>/recent_orders</code> endpoint is implemented as follows:
-                <CodeBlock
-                  language="python"
-                  code={`
-@app.get("/recent_orders")
-def read_recent_orders():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("""
-        SELECT po.id, c.name, po.created, po.address
-        FROM purchase_order po
-        JOIN customer c ON po.customer = c.id
-        ORDER BY po.created DESC
-        LIMIT 5;
-    """)
-    orders = cur.fetchall()
-    cur.close()
-    conn.close()
-    return [{ "id": o[0], "customer": o[1], "date": o[2].strftime('%Y-%m-%d'), "address": o[3] } for o in orders]
-`}
-                />
-              </CardContent>
-            </Card> */}
-          </div>
-        </TabsContent>
-      </Tabs>
+            <TabsContent value="api" className="mt-4">
+              <div className="space-y-4">
+                <Card>
+                  <CardContent>
+                    <div className="p-2">
+                      <a
+                        href="https://github.com/hlud6646/storeSimul/blob/main/dashboard-api/main.py"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline text-sm"
+                      >
+                        https://github.com/hlud6646/storeSimul/blob/main/dashboard-api/main.py
+                      </a>
+                    </div>
+                    This dashboard is powered by a simple FastAPI service that
+                    exposes the database schema as a REST API. I let the llm
+                    run wild with this one, and it provided a good example of
+                    building to the job. Where I would have reached for{" "}
+                    <code>SqlAlchemy</code> and subclassed `pydantic.Basemodel`, it
+                    just wrote some SQL in the API handler, and made the
+                    handler return a list of python dictionaries. FastApi is
+                    smart enough to convert this to JSON.
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </main>
     </div>
   );
 }

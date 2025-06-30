@@ -8,11 +8,14 @@
 FROM debian:bookworm-slim AS base
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Set timezone
+ENV TZ=Australia/Sydney
+
 # Install dependencies for all services
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     # General dependencies
-    curl git gnupg netbase pkg-config supervisor \
+    curl git gnupg netbase pkg-config supervisor tzdata \
     # Python (for customers)
     python3 python3-pip pipx \
     # Java (for products)

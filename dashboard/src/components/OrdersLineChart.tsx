@@ -35,8 +35,25 @@ export function OrdersLineChart() {
       try {
         const response = await fetch("http://localhost:8005/orders_over_time");
         const data = await response.json();
-        const labels = data.map((item) => item.date);
-        const values = data.map((item) => item.orders);
+        const slicedData = data.slice(-30);
+
+        const labels = slicedData.map((item: { date: string }) => {
+          const parts = item.date.split(" ");
+          if (parts.length > 1) {
+            const timeStr = parts[1];
+            if (timeStr.length === 6) {
+              return `${timeStr.substring(0, 2)}:${timeStr.substring(
+                2,
+                4
+              )}:${timeStr.substring(4, 6)}`;
+            }
+            return timeStr;
+          }
+          return item.date;
+        });
+        const values = slicedData.map(
+          (item: { orders: number }) => item.orders
+        );
 
         setChartData({
           labels,
@@ -62,14 +79,23 @@ export function OrdersLineChart() {
 
   const chartOptions: ChartOptions<'line'> = {
     responsive: true,
+    maintainAspectRatio: true,
     plugins: {
-        legend: {
-          position: "top" as const,
-          display: false,
-        },
+      legend: {
+        position: "top" as const,
+        display: false,
+      },
       title: {
         display: true,
         text: "Orders Over Time",
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          maxRotation: 0,
+          maxTicksLimit: 10,
+        },
       },
     },
   };
