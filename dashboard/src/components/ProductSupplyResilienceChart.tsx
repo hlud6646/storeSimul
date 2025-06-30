@@ -19,7 +19,9 @@ export function ProductSupplyResilienceChart() {
   useEffect(() => {
     async function fetchProductSupplyResilience() {
       try {
-        const response = await fetch("http://localhost:8005/product_supply_resilience");
+        const response = await fetch(
+          "http://localhost:8005/product_supply_resilience",
+        );
         const data: ProductSupplyResilience[] = await response.json();
         const labels = data.map((p) => p.name);
         const values = data.map((p) => p.suppliers);
@@ -80,4 +82,4 @@ export function ProductSupplyResilienceChart() {
       </CardContent>
     </Card>
   );
-} 
+}

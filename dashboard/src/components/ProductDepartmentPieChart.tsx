@@ -34,7 +34,7 @@ export function ProductDepartmentPieChart() {
         const sortedData = [...data].sort((a, b) => b.count - a.count);
         const top10Data = sortedData.slice(0, 10);
         const colors = top10Data.map(
-          (_, i) => `hsl(${(i * 360) / top10Data.length}, 50%, 60%)`
+          (_, i) => `hsl(${(i * 360) / top10Data.length}, 50%, 60%)`,
         );
         setChartData({
           labels: top10Data.map((d) => d.department),
@@ -60,4 +60,4 @@ export function ProductDepartmentPieChart() {
       </CardContent>
     </Card>
   );
-} 
+}

@@ -21,11 +21,11 @@ ChartJS.register(
   Tooltip,
   Legend,
   PointElement,
-  LineElement
+  LineElement,
 );
 
 export function OrdersLineChart() {
-  const [chartData, setChartData] = useState<ChartData<'line'>>({
+  const [chartData, setChartData] = useState<ChartData<"line">>({
     labels: [],
     datasets: [],
   });
@@ -44,7 +44,7 @@ export function OrdersLineChart() {
             if (timeStr.length === 6) {
               return `${timeStr.substring(0, 2)}:${timeStr.substring(
                 2,
-                4
+                4,
               )}:${timeStr.substring(4, 6)}`;
             }
             return timeStr;
@@ -52,7 +52,7 @@ export function OrdersLineChart() {
           return item.date;
         });
         const values = slicedData.map(
-          (item: { orders: number }) => item.orders
+          (item: { orders: number }) => item.orders,
         );
 
         setChartData({
@@ -77,7 +77,7 @@ export function OrdersLineChart() {
     return () => clearInterval(interval);
   }, []);
 
-  const chartOptions: ChartOptions<'line'> = {
+  const chartOptions: ChartOptions<"line"> = {
     responsive: true,
     maintainAspectRatio: true,
     plugins: {
@@ -101,4 +101,4 @@ export function OrdersLineChart() {
   };
 
   return <Line options={chartOptions} data={chartData} />;
-} 
+}

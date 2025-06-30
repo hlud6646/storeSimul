@@ -20,7 +20,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  ArcElement
+  ArcElement,
 );
 
 export const options: ChartOptions<"bar"> = {
@@ -36,18 +36,18 @@ export const options: ChartOptions<"bar"> = {
   },
 };
 
-export function BarChart({ 
-  data, 
+export function BarChart({
+  data,
   options,
   title,
-}: { 
-  data: ChartData<'bar'>, 
-  options?: ChartOptions<'bar'>, 
-  title?: string 
+}: {
+  data: ChartData<"bar">;
+  options?: ChartOptions<"bar">;
+  title?: string;
 }) {
   const chartOptions = {
     ...options,
-  }
+  };
   return <Bar options={options} data={data} />;
 }
 

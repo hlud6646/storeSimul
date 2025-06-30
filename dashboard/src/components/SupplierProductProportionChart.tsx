@@ -17,7 +17,9 @@ export function SupplierProductProportionChart() {
   useEffect(() => {
     async function fetchSupplierProportion() {
       try {
-        const response = await fetch("http://localhost:8005/supplier_product_proportion");
+        const response = await fetch(
+          "http://localhost:8005/supplier_product_proportion",
+        );
         const data: SupplierProportion[] = await response.json();
         const labels = data.map((p) => p.name);
         const values = data.map((p) => p.proportion);
@@ -89,4 +91,4 @@ export function SupplierProductProportionChart() {
       </CardContent>
     </Card>
   );
-} 
+}

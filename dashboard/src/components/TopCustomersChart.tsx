@@ -73,4 +73,4 @@ export function TopCustomersChart() {
       </CardContent>
     </Card>
   );
-} 
+}
