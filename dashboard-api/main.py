@@ -77,44 +77,26 @@ def read_new_customers():
     conn.close()
     return [{ "id": c[0], "name": c[1], "email": c[2], "joined": c[3].strftime('%Y-%m-%d') } for c in customers]
 
-# New version that is broken (no %% operator; see /var/logs/supervisor/... inside container)
-# @app.get("/orders_over_time")
-# def read_orders_over_time():
-#     conn = get_db_connection()
-#     cur = conn.cursor()
-#     cur.execute("""
-#         SELECT
-#             date_trunc('second', created) - (EXTRACT(SECOND FROM created)::int %% 10) * interval '1 second' as time_window,
-#             COUNT(id) as order_count
-#         FROM
-#             purchase_order
-#         GROUP BY
-#             time_window
-#         ORDER BY
-#             time_window DESC
-#         LIMIT 10;
-#     """)
-#     orders_data = cur.fetchall()
-#     cur.close()
-#     conn.close()
-#     return [{ "date": row[0].strftime('%H:%M:%S'), "orders": row[1] } for row in orders_data]
 
-
-# Old version that seems to work, taken from previous commit.
 @app.get("/orders_over_time")
 def read_orders_over_time():
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("""
-        SELECT
-            to_timestamp(floor((extract(epoch from created) / 10)) * 10) AT TIME ZONE 'UTC' as time_window,
-            COUNT(id) as order_count
-        FROM
-            purchase_order
-        GROUP BY
-            time_window
+        SELECT * FROM (
+            SELECT
+                to_timestamp(floor((extract(epoch from created) / 2)) * 2) AT TIME ZONE 'UTC' as time_window,
+                COUNT(id) as order_count
+            FROM
+                purchase_order
+            GROUP BY
+                time_window
+            ORDER BY
+                time_window DESC
+            LIMIT 10
+        ) as recent_orders
         ORDER BY
-            time_window;
+            time_window ASC;
     """)
     orders_data = cur.fetchall()
     cur.close()

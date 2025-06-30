@@ -5,11 +5,10 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import "./index.css";
-import { RecentOrders } from "./components/RecentOrders";
 import { TopProducts } from "./components/TopProducts";
 import { NewCustomers } from "./components/NewCustomers";
 import { TopCustomersChart } from "./components/TopCustomersChart";
-import { OrdersLineChart } from "./components/charts";
+import { OrdersLineChart } from "./components/OrdersLineChart";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CodeBlock } from "./components/CodeBlock";
 import { useState, useEffect } from "react";

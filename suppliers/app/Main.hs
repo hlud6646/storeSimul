@@ -134,9 +134,10 @@ writeSupplierProducts conn supplierID productIds = do
 sleep :: IO ()
 sleep = do
   gen <- createSystemRandom
-  let dist = exponential 0.05
+  let dist = exponential 1
   waitTime <- genContVar dist gen
-  threadDelay (round (waitTime * 150000))
+  rate <- read <$> getEnv "SUPPLIER_RATE"
+  threadDelay (round (waitTime * rate))
   return ()
 
 -- Log the new supplier.

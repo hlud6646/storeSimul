@@ -15,9 +15,6 @@ defmodule Orders.NewOrder do
   import Ecto.Query
   import Faker.Address.En
 
-  @min_delay 3000
-  @max_delay 6000
-
   def start_link(_) do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
@@ -36,7 +33,9 @@ defmodule Orders.NewOrder do
   end
 
   defp schedule_new_order do
-    delay = :rand.uniform(@max_delay - @min_delay) + @min_delay
+    min_delay = System.fetch_env!("ORDER_MIN_DELAY").to_integer
+    max_delay = System.fetch_env!("ORDER_MAX_DELAY").to_integer
+    delay = :rand.uniform(max_delay - min_delay) + min_delay
     Process.send_after(self(), :create_order, delay)
   end
 

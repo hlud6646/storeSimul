@@ -28,7 +28,7 @@ object Main extends App {
         }
       }
       waitTime =
-        new ExponentialDistribution(1 * SECONDS_PER_MINUTE).sample().toInt * 10
+        new ExponentialDistribution(1 * SECONDS_PER_MINUTE).sample().toInt * sys.env("PRODUCT_RATE").toInt
       Thread.sleep(waitTime)
     } catch {
       case e: Exception => e.printStackTrace()
