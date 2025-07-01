@@ -17,11 +17,9 @@ export function ProductSupplyResilienceChart() {
   const [inventoryData, setInventoryData] = useState<number[]>([]);
 
   useEffect(() => {
-    async function fetchProductSupplyResilience() {
+    async function fetchChartData() {
       try {
-        const response = await fetch(
-          "http://localhost:8005/product_supply_resilience",
-        );
+        const response = await fetch(`/api/product_supply_resilience`);
         const data: ProductSupplyResilience[] = await response.json();
         const labels = data.map((p) => p.name);
         const values = data.map((p) => p.suppliers);
@@ -42,8 +40,8 @@ export function ProductSupplyResilienceChart() {
       }
     }
 
-    fetchProductSupplyResilience();
-    const interval = setInterval(fetchProductSupplyResilience, 5000);
+    fetchChartData();
+    const interval = setInterval(fetchChartData, 5000);
 
     return () => clearInterval(interval);
   }, []);

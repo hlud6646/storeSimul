@@ -37,7 +37,7 @@ export function TopCustomersChart() {
   useEffect(() => {
     async function fetchTopCustomers() {
       try {
-        const response = await fetch("http://localhost:8005/top_customers");
+        const response = await fetch(`/api/top_customers`);
         const data: Customer[] = await response.json();
         const labels = data.map((c) => c.name);
         const values = data.map((c) => c.orders);

@@ -8,6 +8,7 @@ app = FastAPI()
 # CORS configuration
 origins = [
     "http://localhost:3000",
+    "http://localhost:8005",
 ]
 
 app.add_middleware(
@@ -198,4 +199,4 @@ def read_products_by_department():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8005)
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8005)))

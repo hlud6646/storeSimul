@@ -150,6 +150,7 @@ const result = await build({
   sourcemap: "linked",
   define: {
     "process.env.NODE_ENV": JSON.stringify("production"),
+    "process.env.API_URL": "http://localhost:8006"
   },
   ...cliConfig, // Merge in any CLI-provided options
 });

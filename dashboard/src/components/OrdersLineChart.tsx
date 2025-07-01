@@ -24,6 +24,30 @@ ChartJS.register(
   LineElement,
 );
 
+interface OrderData {
+  date: string;
+  orders: number;
+}
+
+function transformData(data: OrderData[]) {
+  const labels = data.map((item) => {
+    const date = new Date(item.date);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+  });
+  const values = data.map((item) => item.orders);
+
+  return {
+    labels,
+    datasets: [
+      {
+        data: values,
+        borderColor: "rgb(75, 192, 192)",
+        tension: 0.1,
+      },
+    ],
+  };
+}
+
 export function OrdersLineChart() {
   const [chartData, setChartData] = useState<ChartData<"line">>({
     labels: [],
@@ -31,48 +55,18 @@ export function OrdersLineChart() {
   });
 
   useEffect(() => {
-    async function fetchOrders() {
+    async function fetchChartData() {
       try {
-        const response = await fetch("http://localhost:8005/orders_over_time");
-        const data = await response.json();
-        const slicedData = data.slice(-30);
-
-        const labels = slicedData.map((item: { date: string }) => {
-          const parts = item.date.split(" ");
-          if (parts.length > 1) {
-            const timeStr = parts[1];
-            if (timeStr.length === 6) {
-              return `${timeStr.substring(0, 2)}:${timeStr.substring(
-                2,
-                4,
-              )}:${timeStr.substring(4, 6)}`;
-            }
-            return timeStr;
-          }
-          return item.date;
-        });
-        const values = slicedData.map(
-          (item: { orders: number }) => item.orders,
-        );
-
-        setChartData({
-          labels,
-          datasets: [
-            {
-              // label: "Incoming Orders",
-              data: values,
-              borderColor: "rgb(75, 192, 192)",
-              tension: 0.1,
-            },
-          ],
-        });
+        const response = await fetch(`/api/orders_over_time`);
+        const data: OrderData[] = await response.json();
+        setChartData(transformData(data));
       } catch (error) {
         console.error("Failed to fetch orders:", error);
       }
     }
 
-    fetchOrders();
-    const interval = setInterval(fetchOrders, 2000);
+    fetchChartData();
+    const interval = setInterval(fetchChartData, 2000);
 
     return () => clearInterval(interval);
   }, []);

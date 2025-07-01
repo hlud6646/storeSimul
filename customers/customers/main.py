@@ -17,12 +17,12 @@ def exponential(rate):
     return -(1 / rate) * log(1 - random())
 
 # Configure logging.
-log_dir = Path(__file__).parent.parent / 'logs'
-log_dir.mkdir(exist_ok=True)
-log_path = log_dir / 'create_customer.log'
-if not log_path.exists():
-    log_path.touch()
-logger.add(log_path, level="DEBUG")
+# log_dir = Path(__file__).parent.parent / 'logs'
+# log_dir.mkdir(exist_ok=True)
+# log_path = log_dir / 'create_customer.log'
+# if not log_path.exists():
+#     log_path.touch()
+# logger.add(log_path, level="DEBUG")
 
 # Configure database connection.
 pg_host     = os.environ.get("POSTGRES_HOST")     or "store-db"

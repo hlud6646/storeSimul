@@ -28,9 +28,10 @@ export function ProductDepartmentPieChart() {
   };
 
   useEffect(() => {
-    fetch("http://localhost:8005/products_by_department")
-      .then((res) => res.json())
-      .then((data: DepartmentProductCount[]) => {
+    async function fetchChartData() {
+      try {
+        const response = await fetch(`/api/products_by_department`);
+        const data: DepartmentProductCount[] = await response.json();
         const sortedData = [...data].sort((a, b) => b.count - a.count);
         const top10Data = sortedData.slice(0, 10);
         const colors = top10Data.map(
@@ -45,7 +46,12 @@ export function ProductDepartmentPieChart() {
             },
           ],
         });
-      });
+      } catch (error) {
+        console.error("Error fetching chart data:", error);
+      }
+    }
+
+    fetchChartData();
   }, []);
 
   return (
