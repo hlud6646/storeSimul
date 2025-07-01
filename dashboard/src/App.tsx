@@ -121,10 +121,10 @@ export function App() {
                     service that exposes parts of the database. I did learn
                     something here about building only what you need. Where I
                     would have overcomplicated by reaching for{" "}
-                    <code>SqlAlchemy</code> and subclassing
+                    `SqlAlchemy` and subclassing
                     `pydantic.Basemodel`, the llm just wrote some SQL in the
                     request handler, and made the handler return a list of
-                    python dictionaries. FastApi is smart enough to convert this
+                    Python dictionaries. FastApi is smart enough to convert this
                     to JSON.
                   </p>
                   <br />
