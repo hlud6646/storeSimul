@@ -1,5 +1,10 @@
 # Fake Store
 
+**Given the scope and intention of this project, would SQLite not be a more
+appropriate solution? I mean, we're not persisting the database, or using
+anything that's particular to postgres. We *are* installing on an container
+though, which is both weird and hard to do with a full database service...**
+
 This is a pretty kooky project and exists entirely for learning.
 It is essesntially a simulation of a shop, with a database recording
 customers, product inventory, orders etc. 
